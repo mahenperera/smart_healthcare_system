@@ -31,3 +31,18 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Node / React ###
+client/node_modules/
+
+# Prevent accidental Node artifacts inside Spring services (keep client/package-lock.json tracked)
+services/**/node_modules/
+services/**/package-lock.json
+services/**/yarn.lock
+services/**/pnpm-lock.yaml
+
+### Env (do not commit secrets) ###
+.env
+.env.*
+!.env.example
+infra/docker/.env

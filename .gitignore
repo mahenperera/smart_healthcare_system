@@ -22,3 +22,37 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# -----------------------------
+# Java / Spring Boot / Maven
+# -----------------------------
+**/target/
+**/.classpath
+**/.project
+**/.settings/
+**/.factorypath
+**/.springBeans
+**/.sts4-cache/
+
+# IntelliJ
+**/.idea/
+**/*.iws
+**/*.iml
+**/*.ipr
+
+# -----------------------------
+# Prevent Node artifacts inside services by mistake
+# (keep client/package-lock.json tracked)
+# -----------------------------
+services/**/package-lock.json
+services/**/yarn.lock
+services/**/pnpm-lock.yaml
+services/**/node_modules/
+
+# -----------------------------
+# Env / secrets (optional but safe)
+# -----------------------------
+.env
+.env.*
+!.env.example
+infra/docker/.env
