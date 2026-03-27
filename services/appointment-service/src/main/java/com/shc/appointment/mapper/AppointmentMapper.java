@@ -4,6 +4,7 @@ import com.shc.appointment.dto.AppointmentResponse;
 import com.shc.appointment.dto.CreateAppointmentRequest;
 import com.shc.appointment.dto.UpdateAppointmentRequest;
 import com.shc.appointment.entity.Appointment;
+import com.shc.appointment.enums.AppointmentType;
 
 public class AppointmentMapper {
 
@@ -15,6 +16,10 @@ public class AppointmentMapper {
         a.setStartTime(req.getStartTime());
         a.setEndTime(req.getEndTime());
         a.setReason(req.getReason());
+
+        // Default to PHYSICAL if not provided
+        a.setAppointmentType(req.getAppointmentType() != null ? req.getAppointmentType() : AppointmentType.PHYSICAL);
+
         // status default handled in entity
         return a;
     }
@@ -23,6 +28,9 @@ public class AppointmentMapper {
         if (req.getStartTime() != null) a.setStartTime(req.getStartTime());
         if (req.getEndTime() != null) a.setEndTime(req.getEndTime());
         if (req.getReason() != null) a.setReason(req.getReason());
+
+        // (optional) if later you allow changing appointmentType in update request,
+        // you can add it here.
     }
 
     public static AppointmentResponse toResponse(Appointment a) {
@@ -34,6 +42,7 @@ public class AppointmentMapper {
         res.setStartTime(a.getStartTime());
         res.setEndTime(a.getEndTime());
         res.setStatus(a.getStatus());
+        res.setAppointmentType(a.getAppointmentType());
         res.setReason(a.getReason());
         res.setCreatedAt(a.getCreatedAt());
         res.setUpdatedAt(a.getUpdatedAt());

@@ -1,11 +1,13 @@
 package com.shc.appointment.dto;
 
 import com.shc.appointment.enums.AppointmentStatus;
+import com.shc.appointment.enums.AppointmentType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class AppointmentResponse {
+
     private UUID id;
     private String patientId;
     private String doctorId;
@@ -13,11 +15,11 @@ public class AppointmentResponse {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private AppointmentStatus status;
+    private AppointmentType appointmentType;
     private String reason;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // getters/setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 
@@ -38,6 +40,9 @@ public class AppointmentResponse {
 
     public AppointmentStatus getStatus() { return status; }
     public void setStatus(AppointmentStatus status) { this.status = status; }
+
+    public AppointmentType getAppointmentType() { return appointmentType; }
+    public void setAppointmentType(AppointmentType appointmentType) { this.appointmentType = appointmentType; }
 
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }

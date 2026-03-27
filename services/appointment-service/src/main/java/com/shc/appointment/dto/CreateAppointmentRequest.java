@@ -1,11 +1,13 @@
 package com.shc.appointment.dto;
 
+import com.shc.appointment.enums.AppointmentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
 public class CreateAppointmentRequest {
+
     @NotBlank
     private String patientId;
 
@@ -23,7 +25,9 @@ public class CreateAppointmentRequest {
 
     private String reason;
 
-    // getters/setters
+    // ONLINE or PHYSICAL (optional; defaults to PHYSICAL in mapper/entity)
+    private AppointmentType appointmentType;
+
     public String getPatientId() { return patientId; }
     public void setPatientId(String patientId) { this.patientId = patientId; }
 
@@ -41,4 +45,7 @@ public class CreateAppointmentRequest {
 
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
+
+    public AppointmentType getAppointmentType() { return appointmentType; }
+    public void setAppointmentType(AppointmentType appointmentType) { this.appointmentType = appointmentType; }
 }
