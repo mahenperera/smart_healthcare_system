@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: shs-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: healthcare
+      POSTGRES_USER: healthcare_user
+      POSTGRES_PASSWORD: healthcare_pass
+    volumes:
+      - shs_pgdata:/var/lib/postgresql/data
+
+volumes:
+  shs_pgdata:

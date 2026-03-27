@@ -1,0 +1,77 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: appointment-service
+#   namespace: shc
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: appointment-service
+#   template:
+#     metadata:
+#       labels:
+#         app: appointment-service
+#     spec:
+#       containers:
+#         - name: appointment-service
+#           image: shc-appointment:dev
+#           imagePullPolicy: IfNotPresent
+#           ports:
+#             - containerPort: 8080
+#           envFrom:
+#             - configMapRef:
+#                 name: appointment-config
+#             - secretRef:
+#                 name: appointment-secret
+#           readinessProbe:
+#             httpGet:
+#               path: /health
+#               port: 8080
+#             initialDelaySeconds: 10
+#             periodSeconds: 10
+#           livenessProbe:
+#             httpGet:
+#               path: /health
+#               port: 8080
+#             initialDelaySeconds: 20
+#             periodSeconds: 20
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-service
+  namespace: shc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointment-service
+  template:
+    metadata:
+      labels:
+        app: appointment-service
+    spec:
+      containers:
+        - name: appointment-service
+          image: shc-appointment:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: appointment-config
+            - secretRef:
+                name: appointment-secret
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
