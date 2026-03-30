@@ -7,6 +7,8 @@ import AppointmentsListPage from "../pages/appointments/AppointmentsListPage";
 import NewAppointmentPage from "../pages/appointments/NewAppointmentPage";
 import CreateAppointmentPage from "../pages/appointments/CreateAppointmentPage";
 
+import TelemedicinePage from "../pages/telemedicine/TelemedicinePage";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -18,6 +20,12 @@ export default function AppRoutes() {
           <Route path="new" element={<NewAppointmentPage />} />
           <Route path="create" element={<CreateAppointmentPage />} />
         </Route>
+
+        {/* Telemedicine entry (per appointment) */}
+        <Route
+          path="/telemedicine/:appointmentId"
+          element={<TelemedicinePage />}
+        />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

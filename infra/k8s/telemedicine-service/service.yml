@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: telemedicine-service
+  namespace: shc
+spec:
+  selector:
+    app: telemedicine-service
+  ports:
+    - name: http
+      port: 8085
+      targetPort: 8085
+  type: ClusterIP
