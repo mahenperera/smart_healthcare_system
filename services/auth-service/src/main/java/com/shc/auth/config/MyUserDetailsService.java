@@ -1,6 +1,5 @@
 package com.shc.auth.config;
 
-import com.shc.auth.config.UserPrincipal;
 import com.shc.auth.entity.AppUser;
 import com.shc.auth.repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -80,16 +80,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InsufficientStockException.class)
-    public ResponseEntity<ErrorResponse> handleInsufficientStock(InsufficientStockException ex) {
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                System.currentTimeMillis()
-        );
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
     // Database exceptions
     @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
