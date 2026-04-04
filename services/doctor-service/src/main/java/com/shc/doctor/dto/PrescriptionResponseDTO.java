@@ -1,71 +1,29 @@
-package com.shc.doctor.entity;
+package com.shc.doctor.dto;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
-@Entity
-@Table(name = "prescriptions")
-public class Prescription {
+public class PrescriptionResponseDTO {
 
-    @Id
-    @GeneratedValue
     private UUID id;
-
-    @Column(nullable = false)
     private String doctorId;
-
-    @Column(nullable = false)
+    private String doctorName;
     private String patientId;
-
-    private String appointmentId;
-
-    @Column(nullable = false)
     private String patientName;
-
     private Integer patientAge;
-
     private String patientGender;
-
-    @Column(length = 2000)
+    private String appointmentId;
     private String diagnosis;
-
-    @Column(length = 3000)
     private String symptoms;
-
-    // JSON or structured text containing medicine details
-    @Column(length = 5000, nullable = false)
-    private String medications; // JSON array of medications
-
-    @Column(length = 2000)
+    private List<PrescriptionDTO.MedicationItem> medications;
     private String labTests;
-
-    @Column(length = 2000)
     private String instructions;
-
-    @Column(length = 1000)
     private String followUpNotes;
-
     private LocalDateTime followUpDate;
-
     private String status;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    public void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        if (status == null) {
-            status = "ACTIVE";
-        }
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     // Getters and Setters
     public UUID getId() {
@@ -84,20 +42,20 @@ public class Prescription {
         this.doctorId = doctorId;
     }
 
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
     public String getPatientId() {
         return patientId;
     }
 
     public void setPatientId(String patientId) {
         this.patientId = patientId;
-    }
-
-    public String getAppointmentId() {
-        return appointmentId;
-    }
-
-    public void setAppointmentId(String appointmentId) {
-        this.appointmentId = appointmentId;
     }
 
     public String getPatientName() {
@@ -124,6 +82,14 @@ public class Prescription {
         this.patientGender = patientGender;
     }
 
+    public String getAppointmentId() {
+        return appointmentId;
+    }
+
+    public void setAppointmentId(String appointmentId) {
+        this.appointmentId = appointmentId;
+    }
+
     public String getDiagnosis() {
         return diagnosis;
     }
@@ -140,11 +106,11 @@ public class Prescription {
         this.symptoms = symptoms;
     }
 
-    public String getMedications() {
+    public List<PrescriptionDTO.MedicationItem> getMedications() {
         return medications;
     }
 
-    public void setMedications(String medications) {
+    public void setMedications(List<PrescriptionDTO.MedicationItem> medications) {
         this.medications = medications;
     }
 

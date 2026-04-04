@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -29,14 +30,16 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = null;
         String email = null;
         String role = null;
+        String userId = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             try {
                 email = jwtService.extractEmail(token);
                 role = jwtService.extractRole(token);
+                userId = jwtService.extractUserId(token);
             } catch (Exception e) {
-                // Invalid token
+                // Invalid token, continue without authentication
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -44,14 +47,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtService.validateToken(token)) {
-                // Create authentication token with role-based authority
+                // Store userId, email, and role in authentication details for easy access
+                Map<String, String> details = new HashMap<>();
+                details.put("userId", userId);
+                details.put("email", email);
+                details.put("role", role);
+
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 email,
                                 null,
                                 Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role))
                         );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                authToken.setDetails(details);
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
