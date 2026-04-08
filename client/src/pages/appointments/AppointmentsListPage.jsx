@@ -1,487 +1,305 @@
-// // client/src/pages/appointments/AppointmentsListPage.jsx
-// import { useEffect, useMemo, useState } from "react";
-// import { Link } from "react-router-dom";
-// import { appointmentApi } from "../../api/appointment-api";
-// import {
-//   Card,
-//   CardContent,
-//   CardHeader,
-//   CardTitle,
-//   CardDescription,
-// } from "../../components/ui/card";
-// import { Button } from "../../components/ui/button";
-
-// function fmt(iso) {
-//   if (!iso) return "-";
-//   const d = new Date(iso);
-//   return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
-// }
-
-// function getAppointmentId(a) {
-//   return a?.id || a?.appointmentId || a?._id || "";
-// }
-
-// export default function AppointmentsListPage() {
-//   const [rows, setRows] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [err, setErr] = useState("");
-
-//   // patient view (temp until auth)
-//   const [viewMode, setViewMode] = useState("mine"); // "mine" | "all"
-//   const [patientId, setPatientId] = useState("p1");
-
-//   async function load() {
-//     setLoading(true);
-//     setErr("");
-
-//     try {
-//       const data = await appointmentApi.list();
-//       setRows(Array.isArray(data) ? data : []);
-//     } catch (e) {
-//       setErr(e?.message || "Failed to fetch");
-//     } finally {
-//       setLoading(false);
-//     }
-//   }
-
-//   useEffect(() => {
-//     load();
-//   }, []);
-
-//   const visible = useMemo(() => {
-//     const base = Array.isArray(rows) ? rows : [];
-
-//     const filtered =
-//       viewMode === "mine"
-//         ? base.filter((a) => String(a.patientId || "") === String(patientId))
-//         : base;
-
-//     return [...filtered].sort((a, b) =>
-//       String(b.createdAt || "").localeCompare(String(a.createdAt || "")),
-//     );
-//   }, [rows, viewMode, patientId]);
-
-//   return (
-//     <Card className="rounded-3xl">
-//       <CardHeader className="flex flex-row items-start justify-between gap-4">
-//         <div>
-//           <CardTitle>Appointments</CardTitle>
-//           <CardDescription>
-//             {viewMode === "mine"
-//               ? `Showing appointments for patient: ${patientId} (temp until auth).`
-//               : "Showing all appointments (admin/testing view)."}
-//           </CardDescription>
-//         </div>
-
-//         <div className="flex flex-col items-end gap-2">
-//           <div className="flex items-center gap-2">
-//             <Button
-//               variant={viewMode === "mine" ? "default" : "outline"}
-//               onClick={() => setViewMode("mine")}
-//             >
-//               Mine
-//             </Button>
-
-//             <Button
-//               variant={viewMode === "all" ? "default" : "outline"}
-//               onClick={() => setViewMode("all")}
-//             >
-//               All
-//             </Button>
-
-//             <Button variant="outline" onClick={load}>
-//               Refresh
-//             </Button>
-//           </div>
-
-//           {viewMode === "mine" ? (
-//             <div className="flex items-center gap-2 text-sm">
-//               <span className="text-slate-600">Patient ID</span>
-//               <input
-//                 className="h-9 w-28 rounded-xl border px-3 text-sm outline-none focus:ring-2 focus:ring-emerald-200"
-//                 value={patientId}
-//                 onChange={(e) => setPatientId(e.target.value)}
-//               />
-//             </div>
-//           ) : null}
-//         </div>
-//       </CardHeader>
-
-//       <CardContent>
-//         {err ? (
-//           <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-//             {err}
-//           </div>
-//         ) : null}
-
-//         {loading ? (
-//           <div className="py-6 text-slate-600">Loading…</div>
-//         ) : (
-//           <div className="overflow-auto rounded-2xl border border-slate-200">
-//             <table className="min-w-[1050px] w-full text-sm">
-//               <thead className="bg-slate-50">
-//                 <tr className="text-left">
-//                   <th className="p-3">Doctor</th>
-//                   <th className="p-3">Patient</th>
-//                   <th className="p-3">Specialty</th>
-//                   <th className="p-3">Type</th>
-//                   <th className="p-3">Status</th>
-//                   <th className="p-3">Start</th>
-//                   <th className="p-3">End</th>
-//                   <th className="p-3">Telemedicine</th>
-//                 </tr>
-//               </thead>
-
-//               <tbody>
-//                 {visible.map((a) => {
-//                   const appointmentId = getAppointmentId(a);
-//                   const isOnline =
-//                     String(a.appointmentType || "").toUpperCase() === "ONLINE";
-
-//                   return (
-//                     <tr key={appointmentId} className="border-t">
-//                       <td className="p-3 font-semibold">{a.doctorId}</td>
-//                       <td className="p-3">{a.patientId}</td>
-//                       <td className="p-3">{a.specialty}</td>
-//                       <td className="p-3">{a.appointmentType}</td>
-//                       <td className="p-3">{a.status}</td>
-//                       <td className="p-3">{fmt(a.startTime)}</td>
-//                       <td className="p-3">{fmt(a.endTime)}</td>
-
-//                       <td className="p-3">
-//                         {isOnline && appointmentId ? (
-//                           <Button asChild size="sm">
-//                             <Link to={`/telemedicine/${appointmentId}`}>
-//                               Telemedicine
-//                             </Link>
-//                           </Button>
-//                         ) : (
-//                           <span className="text-slate-400">—</span>
-//                         )}
-//                       </td>
-//                     </tr>
-//                   );
-//                 })}
-
-//                 {visible.length === 0 ? (
-//                   <tr>
-//                     <td className="p-6 text-slate-600" colSpan={8}>
-//                       No appointments found.
-//                     </td>
-//                   </tr>
-//                 ) : null}
-//               </tbody>
-//             </table>
-//           </div>
-//         )}
-//       </CardContent>
-//     </Card>
-//   );
-// }
-
-// client/src/pages/appointments/AppointmentsListPage.jsx
-
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { appointmentApi } from "../../api/appointment-api";
 import { doctorApi } from "../../api/doctor-api";
 import { useAuth } from "../../context/AuthContext";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Card, CardContent } from "../../components/ui/card";
 
-function fmt(iso) {
-  if (!iso) return "-";
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
-}
-
-function getAppointmentId(a) {
-  return a?.id || a?.appointmentId || a?._id || "";
-}
-
-function statusBadgeClass(status) {
+function statusClass(status) {
   const s = String(status || "").toUpperCase();
-  if (s === "CONFIRMED") return "bg-blue-100 text-blue-700";
-  if (s === "COMPLETED") return "bg-emerald-100 text-emerald-700";
-  if (s === "CANCELLED") return "bg-red-100 text-red-700";
-  return "bg-amber-100 text-amber-700";
+
+  if (s === "CONFIRMED") {
+    return "border border-emerald-200 bg-emerald-50 text-emerald-700";
+  }
+  if (s === "CANCELLED") {
+    return "border border-rose-200 bg-rose-50 text-rose-700";
+  }
+  if (s === "PENDING") {
+    return "border border-amber-200 bg-amber-50 text-amber-700";
+  }
+
+  return "border border-slate-200 bg-slate-100 text-slate-700";
+}
+
+function typeClass(type) {
+  const t = String(type || "").toUpperCase();
+
+  if (t === "ONLINE") {
+    return "border border-violet-200 bg-violet-50 text-violet-700";
+  }
+
+  return "border border-slate-200 bg-slate-50 text-slate-700";
+}
+
+function formatDateTime(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+
+  return d.toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function shortDoctorRef(value) {
+  const text = String(value || "");
+  if (text.length <= 18) return text;
+  return `${text.slice(0, 8)}...${text.slice(-4)}`;
 }
 
 export default function AppointmentsListPage() {
   const { user, role } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [rows, setRows] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
-  const [myDoctor, setMyDoctor] = useState(null);
-
   const [loading, setLoading] = useState(true);
-  const [actionLoadingId, setActionLoadingId] = useState("");
-  const [err, setErr] = useState("");
-  const [info, setInfo] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState("");
 
-  async function load() {
-    setLoading(true);
-    setErr("");
-    setInfo("");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
 
+  async function loadData(showRefresh = false) {
     try {
-      const [appointments, doctorList] = await Promise.all([
+      setError("");
+      if (showRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
+      const [appointmentsRes, doctorsRes] = await Promise.all([
         appointmentApi.list(),
-        doctorApi.list().catch(() => []),
+        doctorApi.list(),
       ]);
 
-      setRows(Array.isArray(appointments) ? appointments : []);
-      setDoctors(Array.isArray(doctorList) ? doctorList : []);
-
-      if (role === "DOCTOR" && user?.userId) {
-        try {
-          const doctorProfile = await doctorApi.getByUserId(user.userId);
-          setMyDoctor(doctorProfile || null);
-        } catch {
-          setMyDoctor(null);
-          setInfo(
-            "Doctor profile mapping is not fully linked yet, so 'mine' view may be limited.",
-          );
-        }
-      } else {
-        setMyDoctor(null);
-      }
+      setAppointments(Array.isArray(appointmentsRes) ? appointmentsRes : []);
+      setDoctors(Array.isArray(doctorsRes) ? doctorsRes : []);
     } catch (e) {
-      setErr(e?.message || "Failed to fetch appointments.");
+      setError(e?.message || "Failed to load appointments.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }
 
   useEffect(() => {
-    load();
-  }, [role, user?.userId]);
+    loadData();
+  }, []);
 
-  const doctorNameMap = useMemo(() => {
+  const doctorMap = useMemo(() => {
     const map = new Map();
 
     doctors.forEach((doc) => {
-      const label = doc?.fullName || doc?.name || "Doctor";
-
-      if (doc?.id) map.set(String(doc.id), label);
-      if (doc?.userId) map.set(String(doc.userId), label);
+      const name = doc?.fullName || doc?.name || "Doctor";
+      if (doc?.userId) map.set(String(doc.userId), name);
+      if (doc?.id) map.set(String(doc.id), name);
     });
 
     return map;
   }, [doctors]);
 
-  const visible = useMemo(() => {
-    const base = Array.isArray(rows) ? rows : [];
+  const filteredAppointments = useMemo(() => {
+    return appointments.filter((item) => {
+      const doctorName =
+        doctorMap.get(String(item?.doctorId || "")) ||
+        `Doctor ${shortDoctorRef(item?.doctorId)}`;
+      const specialty = String(item?.specialty || "");
+      const searchText = `${doctorName} ${specialty}`.toLowerCase();
 
-    let filtered = base;
+      const matchesSearch =
+        !search.trim() || searchText.includes(search.trim().toLowerCase());
 
-    if (role === "PATIENT" && user?.userId) {
-      filtered = base.filter(
-        (a) => String(a.patientId || "") === String(user.userId),
-      );
-    }
+      const matchesStatus =
+        !statusFilter ||
+        String(item?.status || "").toUpperCase() === statusFilter;
 
-    if (role === "DOCTOR" && user?.userId) {
-      const possibleDoctorIds = [user.userId, myDoctor?.userId, myDoctor?.id]
-        .filter(Boolean)
-        .map(String);
+      const matchesType =
+        !typeFilter ||
+        String(item?.appointmentType || "").toUpperCase() === typeFilter;
 
-      filtered = base.filter((a) =>
-        possibleDoctorIds.includes(String(a.doctorId || "")),
-      );
-    }
-
-    return [...filtered].sort(
-      (a, b) =>
-        new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
-    );
-  }, [rows, role, user?.userId, myDoctor]);
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }, [appointments, doctorMap, search, statusFilter, typeFilter]);
 
   async function handleCancel(id) {
     try {
-      setActionLoadingId(id);
-      setErr("");
-      await appointmentApi.cancel(id);
-      await load();
+      setError("");
+      await appointmentApi.patch(`/api/appointments/${id}/cancel`);
+      await loadData(true);
     } catch (e) {
-      setErr(e?.message || "Failed to cancel appointment.");
-    } finally {
-      setActionLoadingId("");
+      setError(e?.message || "Failed to cancel appointment.");
     }
   }
 
-  async function handleStatus(id, status) {
-    try {
-      setActionLoadingId(id);
-      setErr("");
-      await appointmentApi.updateStatus(id, status);
-      await load();
-    } catch (e) {
-      setErr(e?.message || "Failed to update status.");
-    } finally {
-      setActionLoadingId("");
-    }
+  function openTelemedicine(item) {
+    navigate("/telemedicine", { state: { appointment: item } });
   }
 
   return (
-    <Card className="rounded-3xl">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div>
-          <CardTitle>Appointments</CardTitle>
-          <CardDescription>
-            {role === "PATIENT"
-              ? "Showing your appointments."
-              : role === "DOCTOR"
-                ? "Showing appointments linked to your doctor account."
-                : "Showing all appointments."}
-          </CardDescription>
-        </div>
+    <Card className="mx-auto max-w-6xl rounded-[24px] border-slate-200 shadow-sm">
+      <CardContent className="p-6 md:p-7">
+        <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h2 className="text-[18px] font-extrabold tracking-tight text-slate-950 md:text-[22px]">
+              Appointments
+            </h2>
+            <p className="mt-2 text-sm text-slate-600">
+              See your appointments, cancel visits, and join telemedicine for
+              online visits.
+            </p>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={load}>
-            Refresh
+          <Button
+            variant="outline"
+            onClick={() => loadData(true)}
+            disabled={refreshing}
+          >
+            {refreshing ? "Refreshing..." : "Refresh"}
           </Button>
         </div>
-      </CardHeader>
 
-      <CardContent>
-        {err ? (
-          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-            {err}
+        {location.state?.flash ? (
+          <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            {location.state.flash}
           </div>
         ) : null}
 
-        {!err && info ? (
-          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-            {info}
+        {error ? (
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
           </div>
         ) : null}
+
+        <div className="mb-5 grid gap-3 md:grid-cols-3">
+          <Input
+            placeholder="Search by doctor or specialty"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+          <select
+            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-emerald-200"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All statuses</option>
+            <option value="PENDING">Pending</option>
+            <option value="CONFIRMED">Confirmed</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+
+          <select
+            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-emerald-200"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            <option value="">All types</option>
+            <option value="ONLINE">Online</option>
+            <option value="PHYSICAL">Physical</option>
+          </select>
+        </div>
 
         {loading ? (
-          <div className="py-6 text-slate-600">Loading...</div>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-600">
+            Loading appointments...
+          </div>
+        ) : filteredAppointments.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center">
+            <div className="text-lg font-bold text-slate-900">
+              No appointments found
+            </div>
+            <div className="mt-2 text-sm text-slate-600">
+              Try adjusting the filters or create a new appointment.
+            </div>
+          </div>
         ) : (
-          <div className="overflow-auto rounded-2xl border border-slate-200">
-            <table className="min-w-[1200px] w-full text-sm">
-              <thead className="bg-slate-50">
-                <tr className="text-left">
-                  <th className="p-3">Doctor</th>
-                  <th className="p-3">Patient</th>
-                  <th className="p-3">Specialty</th>
-                  <th className="p-3">Type</th>
-                  <th className="p-3">Status</th>
-                  <th className="p-3">Start</th>
-                  <th className="p-3">End</th>
-                  <th className="p-3">Actions</th>
-                  <th className="p-3">Telemedicine</th>
-                </tr>
-              </thead>
+          <div className="space-y-4">
+            {filteredAppointments.map((item) => {
+              const doctorName =
+                doctorMap.get(String(item?.doctorId || "")) ||
+                `Doctor ${shortDoctorRef(item?.doctorId)}`;
 
-              <tbody>
-                {visible.map((a) => {
-                  const appointmentId = getAppointmentId(a);
-                  const isOnline =
-                    String(a.appointmentType || "").toUpperCase() === "ONLINE";
-                  const isBusy = actionLoadingId === appointmentId;
+              const isOnline =
+                String(item?.appointmentType || "").toUpperCase() === "ONLINE";
 
-                  return (
-                    <tr key={appointmentId} className="border-t align-top">
-                      <td className="p-3 font-semibold">
-                        {doctorNameMap.get(String(a.doctorId)) ||
-                          String(a.doctorId)}
-                      </td>
-                      <td className="p-3">{a.patientId}</td>
-                      <td className="p-3">{a.specialty}</td>
-                      <td className="p-3">{a.appointmentType}</td>
-                      <td className="p-3">
+              return (
+                <div
+                  key={item.id}
+                  className="rounded-[20px] border border-slate-200 bg-white p-5"
+                >
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-[18px] font-extrabold tracking-tight text-slate-950">
+                          {doctorName}
+                        </h3>
+
                         <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusBadgeClass(a.status)}`}
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClass(item?.status)}`}
                         >
-                          {a.status}
+                          {String(item?.status || "-").toUpperCase()}
                         </span>
-                      </td>
-                      <td className="p-3">{fmt(a.startTime)}</td>
-                      <td className="p-3">{fmt(a.endTime)}</td>
 
-                      <td className="p-3">
-                        <div className="flex flex-wrap gap-2">
-                          {role === "PATIENT" &&
-                          ["PENDING", "CONFIRMED"].includes(
-                            String(a.status || "").toUpperCase(),
-                          ) ? (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleCancel(appointmentId)}
-                              disabled={isBusy}
-                            >
-                              {isBusy ? "Working..." : "Cancel"}
-                            </Button>
-                          ) : null}
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${typeClass(item?.appointmentType)}`}
+                        >
+                          {String(item?.appointmentType || "-").toUpperCase()}
+                        </span>
+                      </div>
 
-                          {role === "DOCTOR" &&
-                          String(a.status || "").toUpperCase() === "PENDING" ? (
-                            <Button
-                              size="sm"
-                              onClick={() =>
-                                handleStatus(appointmentId, "CONFIRMED")
-                              }
-                              disabled={isBusy}
-                            >
-                              {isBusy ? "Working..." : "Confirm"}
-                            </Button>
-                          ) : null}
+                      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
+                        <span>{item?.specialty || "-"}</span>
+                        <span>{formatDateTime(item?.startTime)}</span>
+                        <span>{formatDateTime(item?.endTime)}</span>
+                      </div>
 
-                          {role === "DOCTOR" &&
-                          String(a.status || "").toUpperCase() ===
-                            "CONFIRMED" ? (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                handleStatus(appointmentId, "COMPLETED")
-                              }
-                              disabled={isBusy}
-                            >
-                              {isBusy ? "Working..." : "Complete"}
-                            </Button>
-                          ) : null}
+                      <div className="mt-3 text-sm text-slate-500">
+                        Doctor ref: {shortDoctorRef(item?.doctorId)}
+                      </div>
+
+                      {item?.reason ? (
+                        <div className="mt-3 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                          <span className="font-semibold text-slate-900">
+                            Reason:
+                          </span>{" "}
+                          {item.reason}
                         </div>
-                      </td>
+                      ) : null}
+                    </div>
 
-                      <td className="p-3">
-                        {isOnline && appointmentId ? (
-                          <Button asChild size="sm">
-                            <Link
-                              to={`/telemedicine/${appointmentId}?role=${encodeURIComponent(
-                                role,
-                              )}&userId=${encodeURIComponent(user?.userId || "")}`}
-                            >
-                              Telemedicine
-                            </Link>
-                          </Button>
-                        ) : (
-                          <span className="text-slate-400">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                    <div className="flex shrink-0 flex-row gap-2 lg:flex-col">
+                      {String(item?.status || "").toUpperCase() !==
+                      "CANCELLED" ? (
+                        <Button
+                          variant="outline"
+                          onClick={() => handleCancel(item.id)}
+                        >
+                          Cancel
+                        </Button>
+                      ) : null}
 
-                {visible.length === 0 ? (
-                  <tr>
-                    <td className="p-6 text-slate-600" colSpan={9}>
-                      No appointments found.
-                    </td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
+                      {isOnline &&
+                      String(item?.status || "").toUpperCase() !==
+                        "CANCELLED" ? (
+                        <Button onClick={() => openTelemedicine(item)}>
+                          Telemedicine
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </CardContent>

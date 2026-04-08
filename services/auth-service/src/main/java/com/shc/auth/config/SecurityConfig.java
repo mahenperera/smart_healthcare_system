@@ -1,3 +1,4 @@
+
 package com.shc.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,9 @@ public class SecurityConfig {
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/verify-doctor").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(
-                                "/api/auth/verify-doctor",
                                 "/api/auth/pending-doctors",
                                 "/api/auth/user/**"
                         ).hasRole("ADMIN")
@@ -52,7 +53,6 @@ public class SecurityConfig {
             PasswordEncoder passwordEncoder
     ) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-//        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }

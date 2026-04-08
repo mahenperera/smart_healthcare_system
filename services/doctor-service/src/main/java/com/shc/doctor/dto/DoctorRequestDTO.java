@@ -1,14 +1,31 @@
+
 package com.shc.doctor.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DoctorRequestDTO {
 
+    private String userId;
+
+    @JsonAlias("name")
     private String fullName;
+
     private String specialization;
     private String hospital;
     private String slmcNumber;
-    private int experienceYears;
+    private Integer experienceYears;
     private String qualifications;
     private String bio;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getFullName() {
         return fullName;
@@ -42,11 +59,11 @@ public class DoctorRequestDTO {
         this.slmcNumber = slmcNumber;
     }
 
-    public int getExperienceYears() {
+    public Integer getExperienceYears() {
         return experienceYears;
     }
 
-    public void setExperienceYears(int experienceYears) {
+    public void setExperienceYears(Integer experienceYears) {
         this.experienceYears = experienceYears;
     }
 
