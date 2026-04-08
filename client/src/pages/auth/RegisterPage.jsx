@@ -1,5 +1,3 @@
-// client/src/pages/auth/RegisterPage.jsx
-
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
@@ -35,7 +33,7 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState("");
 
   if (isAuthenticated) {
-    return <Navigate to="/appointments" replace />;
+    return <Navigate to="/" replace />;
   }
 
   async function submit(e) {
@@ -65,7 +63,7 @@ export default function RegisterPage() {
       const response = await register(payload);
 
       if (response?.token) {
-        nav("/appointments", { replace: true });
+        nav("/", { replace: true });
         return;
       }
 
@@ -73,11 +71,9 @@ export default function RegisterPage() {
         response?.message || "Registration successful. You can now login.",
       );
 
-      if (role === "DOCTOR") {
-        setTimeout(() => {
-          nav("/login", { replace: true });
-        }, 1200);
-      }
+      setTimeout(() => {
+        nav("/", { replace: true });
+      }, 1200);
     } catch (error) {
       setErr(error.message || "Registration failed.");
     }

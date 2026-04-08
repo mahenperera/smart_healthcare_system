@@ -1,7 +1,5 @@
-// client/src/pages/auth/LoginPage.jsx
-
 import { useState } from "react";
-import { Navigate, Link, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Link, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -16,16 +14,13 @@ import { useAuth } from "../../context/AuthContext";
 export default function LoginPage() {
   const { isAuthenticated, login, loading } = useAuth();
   const nav = useNavigate();
-  const loc = useLocation();
-
-  const from = loc.state?.from?.pathname || "/appointments";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
 
   if (isAuthenticated) {
-    return <Navigate to="/appointments" replace />;
+    return <Navigate to="/" replace />;
   }
 
   async function submit(e) {
@@ -34,7 +29,7 @@ export default function LoginPage() {
 
     try {
       await login({ email, password });
-      nav(from, { replace: true });
+      nav("/", { replace: true });
     } catch (error) {
       setErr(error.message || "Login failed.");
     }
