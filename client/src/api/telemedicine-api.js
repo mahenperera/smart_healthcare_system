@@ -1,4 +1,12 @@
+// // client/src/api/telemedicine-api.js
 // const BASE = import.meta.env.VITE_TELEMEDICINE_BASE_URL;
+
+// async function readJson(res) {
+//   if (!res.ok) {
+//     throw new Error(await res.text());
+//   }
+//   return res.json();
+// }
 
 // export const telemedicineApi = {
 //   createSession: async (appointmentId) => {
@@ -7,10 +15,26 @@
 //       headers: { "Content-Type": "application/json" },
 //       body: JSON.stringify({ appointmentId }),
 //     });
-//     if (!res.ok) throw new Error(await res.text());
-//     return res.json();
+
+//     return readJson(res);
 //   },
 
+//   // this matches your TelemedicinePage usage:
+//   // telemedicineApi.join(sessionId, { userId, role })
+//   join: async (sessionId, body) => {
+//     const res = await fetch(
+//       `${BASE}/api/telemedicine/sessions/${sessionId}/join`,
+//       {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(body),
+//       },
+//     );
+
+//     return readJson(res);
+//   },
+
+//   // keep this too, in case some other file uses the old name
 //   joinSession: async (sessionId, userId, role) => {
 //     const res = await fetch(
 //       `${BASE}/api/telemedicine/sessions/${sessionId}/join`,
@@ -20,25 +44,35 @@
 //         body: JSON.stringify({ userId, role }),
 //       },
 //     );
-//     if (!res.ok) throw new Error(await res.text());
-//     return res.json();
+
+//     return readJson(res);
 //   },
 
 //   getSession: async (sessionId) => {
 //     const res = await fetch(`${BASE}/api/telemedicine/sessions/${sessionId}`);
-//     if (!res.ok) throw new Error(await res.text());
-//     return res.json();
+//     return readJson(res);
 //   },
 // };
 
-// client/src/api/telemedicine-api.js
-const BASE = import.meta.env.VITE_TELEMEDICINE_BASE_URL;
+const BASE = (
+  import.meta.env.VITE_TELEMEDICINE_BASE_URL || "http://localhost:8085"
+).replace(/\/$/, "");
 
 async function readJson(res) {
-  if (!res.ok) {
-    throw new Error(await res.text());
+  const text = await res.text();
+
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = null;
   }
-  return res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message || text || "Request failed.");
+  }
+
+  return data;
 }
 
 export const telemedicineApi = {
@@ -52,8 +86,6 @@ export const telemedicineApi = {
     return readJson(res);
   },
 
-  // this matches your TelemedicinePage usage:
-  // telemedicineApi.join(sessionId, { userId, role })
   join: async (sessionId, body) => {
     const res = await fetch(
       `${BASE}/api/telemedicine/sessions/${sessionId}/join`,
@@ -61,20 +93,6 @@ export const telemedicineApi = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-      },
-    );
-
-    return readJson(res);
-  },
-
-  // keep this too, in case some other file uses the old name
-  joinSession: async (sessionId, userId, role) => {
-    const res = await fetch(
-      `${BASE}/api/telemedicine/sessions/${sessionId}/join`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, role }),
       },
     );
 

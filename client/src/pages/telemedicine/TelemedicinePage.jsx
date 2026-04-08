@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AgoraRTC from "agora-rtc-sdk-ng";
 import {
   Mic,
@@ -12,9 +12,17 @@ import {
   MonitorSmartphone,
 } from "lucide-react";
 import { telemedicineApi } from "../../api/telemedicine-api";
+import { useAuth } from "../../context/AuthContext";
 
 function getSessionId(session) {
   return session?.id || session?.sessionId || session?._id || "";
+}
+
+function normalizeRole(rawRole) {
+  const role = String(rawRole || "").toUpperCase();
+  if (role === "DOCTOR") return "DOCTOR";
+  if (role === "PATIENT") return "PATIENT";
+  return "";
 }
 
 async function pickBestCameraId() {
@@ -35,10 +43,9 @@ async function pickBestCameraId() {
 export default function TelemedicinePage() {
   const navigate = useNavigate();
   const { appointmentId } = useParams();
-  const [sp] = useSearchParams();
+  const { user, role: authRole } = useAuth();
 
-  const role = (sp.get("role") || "PATIENT").toUpperCase();
-  const userId = sp.get("userId") || "p1";
+  const role = normalizeRole(authRole);
 
   const client = useMemo(
     () => AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }),
@@ -65,18 +72,18 @@ export default function TelemedicinePage() {
   useEffect(() => {
     let alive = true;
 
-    const handleUserPublished = async (user, mediaType) => {
+    const handleUserPublished = async (remoteUser, mediaType) => {
       try {
-        await client.subscribe(user, mediaType);
+        await client.subscribe(remoteUser, mediaType);
 
         if (mediaType === "video" && remoteVideoRef.current) {
           remoteVideoRef.current.innerHTML = "";
-          user.videoTrack?.play(remoteVideoRef.current);
+          remoteUser.videoTrack?.play(remoteVideoRef.current);
           if (alive) setRemoteConnected(true);
         }
 
         if (mediaType === "audio") {
-          user.audioTrack?.play();
+          remoteUser.audioTrack?.play();
           if (alive) setRemoteConnected(true);
         }
       } catch (err) {
@@ -88,9 +95,14 @@ export default function TelemedicinePage() {
       if (mediaType === "video" && remoteVideoRef.current) {
         remoteVideoRef.current.innerHTML = "";
       }
-      if (alive) {
-        setRemoteConnected(false);
+      if (alive) setRemoteConnected(false);
+    };
+
+    const handleUserLeft = () => {
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.innerHTML = "";
       }
+      if (alive) setRemoteConnected(false);
     };
 
     async function cleanup() {
@@ -142,6 +154,12 @@ export default function TelemedicinePage() {
           throw new Error("Missing appointment ID.");
         }
 
+        if (!role) {
+          throw new Error(
+            "Only patient or doctor accounts can join telemedicine.",
+          );
+        }
+
         const s = await telemedicineApi.createSession(appointmentId);
         if (!alive) return;
         setSession(s);
@@ -151,7 +169,16 @@ export default function TelemedicinePage() {
           throw new Error("Telemedicine session ID was not returned.");
         }
 
-        const j = await telemedicineApi.join(sessionId, { userId, role });
+        const joinUserId = role === "DOCTOR" ? s?.doctorId : s?.patientId;
+        if (!joinUserId) {
+          throw new Error("Telemedicine participant ID was not found.");
+        }
+
+        const j = await telemedicineApi.join(sessionId, {
+          userId: joinUserId,
+          role,
+        });
+
         if (!alive) return;
         setJoinInfo(j);
 
@@ -165,6 +192,7 @@ export default function TelemedicinePage() {
 
         client.on("user-published", handleUserPublished);
         client.on("user-unpublished", handleUserUnpublished);
+        client.on("user-left", handleUserLeft);
 
         await client.join(
           j.appId,
@@ -172,6 +200,7 @@ export default function TelemedicinePage() {
           j.token ?? null,
           j.uidOrAccount,
         );
+
         if (!alive) return;
 
         joinedRef.current = true;
@@ -231,12 +260,13 @@ export default function TelemedicinePage() {
       alive = false;
       client.off("user-published", handleUserPublished);
       client.off("user-unpublished", handleUserUnpublished);
+      client.off("user-left", handleUserLeft);
 
       cleanup().finally(() => {
         bootedRef.current = false;
       });
     };
-  }, [appointmentId, role, userId, client]);
+  }, [appointmentId, role, client]);
 
   async function handleToggleMic() {
     try {
@@ -350,6 +380,10 @@ export default function TelemedicinePage() {
                 </>
               ) : null}
             </p>
+            <p className="mt-1 text-xs text-slate-500">
+              Signed in as {user?.email || user?.name || "User"} ·{" "}
+              {role || "UNKNOWN"}
+            </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -361,7 +395,7 @@ export default function TelemedicinePage() {
               label={remoteConnected ? "Participant connected" : "Waiting"}
               tone={remoteConnected ? "green" : "slate"}
             />
-            <StatusPill label={role} tone="blue" />
+            <StatusPill label={role || "UNKNOWN"} tone="blue" />
           </div>
         </div>
 
@@ -417,7 +451,7 @@ export default function TelemedicinePage() {
 
         <div className="grid gap-6 lg:grid-cols-2">
           <VideoPanel
-            title={`You (${role})`}
+            title="You"
             status={cameraOn ? "Camera on" : "Camera off"}
             statusTone={cameraOn ? "green" : "slate"}
             fallbackIcon={<User className="h-12 w-12" />}

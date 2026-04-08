@@ -142,7 +142,8 @@ export default function AppointmentsListPage() {
   }
 
   function openTelemedicine(item) {
-    navigate("/telemedicine", { state: { appointment: item } });
+    if (!item?.id) return;
+    navigate(`/telemedicine/${item.id}`, { state: { appointment: item } });
   }
 
   return (
