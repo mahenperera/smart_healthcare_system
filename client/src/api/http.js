@@ -81,8 +81,10 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 async function request(method, path, body) {
   const token = localStorage.getItem("shc_token") || "";
 
+  const isFormData = body instanceof FormData;
+
   const headers = {
-    "Content-Type": "application/json",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
   };
 
   if (token) {
@@ -92,7 +94,7 @@ async function request(method, path, body) {
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
-    body: body ? JSON.stringify(body) : undefined,
+    body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
   });
 
   if (!res.ok) {

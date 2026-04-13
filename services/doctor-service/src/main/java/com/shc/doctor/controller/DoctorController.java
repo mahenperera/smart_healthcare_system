@@ -5,6 +5,7 @@ import com.shc.doctor.entity.Doctor;
 import com.shc.doctor.service.DoctorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +38,12 @@ public class DoctorController {
     @PutMapping("/{id}")
     public Doctor updateDoctor(@PathVariable UUID id, @RequestBody DoctorRequestDTO dto) {
         return service.updateDoctor(id, dto);
+    }
+
+    @PostMapping("/{id}/upload-image")
+    public ResponseEntity<?> uploadImage(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
+        String imageUrl = service.updateProfileImage(id, file);
+        return ResponseEntity.ok().body(java.util.Map.of("profileImageUrl", imageUrl));
     }
 
     @DeleteMapping("/{id}")

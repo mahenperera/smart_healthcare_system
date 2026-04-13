@@ -38,8 +38,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/doctors/*").permitAll()
 
                         .requestMatchers(HttpMethod.PUT, "/api/doctors/*").hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/doctors/*/upload-image").hasAnyRole("DOCTOR", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/doctors/*").hasAnyRole("DOCTOR", "ADMIN")
-
+ 
+                        // availability endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/doctors/availability/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/doctors/availability/**").hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/doctors/availability/**").hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/doctors/availability/**").hasAnyRole("DOCTOR", "ADMIN")
+ 
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

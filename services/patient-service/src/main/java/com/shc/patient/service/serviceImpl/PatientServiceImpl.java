@@ -20,6 +20,7 @@ public  class PatientServiceImpl implements PatientService {
     @Override
     public void createPatient(PatientRequestDTO patientRequestDTO) {
         Patient patient = new Patient();
+        patient.setUserId(patientRequestDTO.getUserId());
         patient.setNic(patientRequestDTO.getNic());
         patient.setName(patientRequestDTO.getName());
         patient.setGender(patientRequestDTO.getGender());
@@ -44,6 +45,20 @@ public  class PatientServiceImpl implements PatientService {
         patientRequestDTO.setEmail(patient.getEmail());
         patientRequestDTO.setPhone(patient.getPhone());
         return patientRequestDTO;
+    }
+
+    @Override
+    public PatientRequestDTO getPatientByUserId(String userId) {
+        Patient patient = patientRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Patient not found for userId: " + userId));
+        PatientRequestDTO dto = new PatientRequestDTO();
+        dto.setUserId(patient.getUserId());
+        dto.setNic(patient.getNic());
+        dto.setName(patient.getName());
+        dto.setGender(patient.getGender());
+        dto.setEmail(patient.getEmail());
+        dto.setPhone(patient.getPhone());
+        return dto;
     }
 
     @Override

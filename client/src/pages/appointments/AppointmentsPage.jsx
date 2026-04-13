@@ -1,26 +1,35 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, Link } from "react-router-dom";
+import { Plus } from "lucide-react";
 import { cn } from "../../utils/cn";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AppointmentsPage() {
-  return (
-    <div className="bg-slate-50">
-      <div className="mx-auto max-w-6xl px-4 py-3 md:px-6 md:py-8">
-        <div className="rounded-[28px] border border-slate-200 bg-white px-6 py-5 shadow-sm">
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-            <div className="min-w-0">
-              <div className="text-[1.5rem] font-black tracking-tight text-slate-950 md:text-[1.8rem]">
-                Appointments
-              </div>
-              <div className="mt-1 text-xs text-slate-600 md:text-sm">
-                Book and manage online or physical doctor appointments.
-              </div>
-            </div>
+  const { role } = useAuth();
 
-            <div className="flex items-center gap-2">
-              <Tab to="/appointments">List</Tab>
-              <Tab to="/appointments/new">New appointment</Tab>
-            </div>
+  return (
+    <div className="flex-1 w-full relative">
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="text-4xl font-black tracking-tight text-slate-950 leading-tight">
+              Appointments
+            </h1>
+            <p className="mt-2 text-lg font-medium text-slate-600 max-w-2xl">
+              Book and manage your online or physical doctor appointments.
+            </p>
           </div>
+
+          {role !== "DOCTOR" && (
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Tab to="/appointments">List View</Tab>
+              <Link
+                to="/appointments/new"
+                className="h-14 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-200 transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                <Plus size={20} /> Book New Appointment
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="mt-5">
@@ -38,10 +47,10 @@ function Tab({ to, children }) {
       end={to === "/appointments"}
       className={({ isActive }) =>
         cn(
-          "rounded-2xl border px-5 py-2.5 text-sm font-bold transition",
+          "h-14 px-6 flex items-center justify-center rounded-2xl text-sm font-black uppercase tracking-widest transition-all w-full sm:w-auto",
           isActive
-            ? "border-emerald-600 bg-emerald-600 text-white"
-            : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+            ? "bg-slate-900 hover:bg-slate-950 text-white shadow-xl shadow-slate-200"
+            : "bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300",
         )
       }
     >

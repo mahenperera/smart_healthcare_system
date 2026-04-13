@@ -12,5 +12,6 @@ import com.shc.patient.model.Patient;
 public interface PatientRepository extends JpaRepository<Patient, UUID> {
 
     Optional<Patient> findByNic(String nic);
+    Optional<Patient> findByUserId(String userId);
     
 }

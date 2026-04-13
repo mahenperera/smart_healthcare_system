@@ -143,6 +143,14 @@ import NewAppointmentPage from "../pages/appointments/NewAppointmentPage";
 import CreateAppointmentPage from "../pages/appointments/CreateAppointmentPage";
 
 import TelemedicinePage from "../pages/telemedicine/TelemedicinePage";
+import DoctorAvailabilityPage from "../pages/doctor/DoctorAvailabilityPage";
+import DoctorProfilePage from "../pages/doctor/DoctorProfilePage";
+import DoctorPrescriptionListPage from "../pages/doctor/PrescriptionListPage";
+import CreatePrescriptionPage from "../pages/doctor/CreatePrescriptionPage";
+import AdminDoctorVerificationPage from "../pages/admin/AdminDoctorVerificationPage";
+import DoctorDirectoryPage from "../pages/patient/DoctorDirectoryPage";
+import DoctorDetailPage from "../pages/patient/DoctorDetailPage";
+import PatientPrescriptionsPage from "../pages/patient/PatientPrescriptionsPage";
 import ProtectedRoute from "./protected-route";
 import PublicOnlyRoute from "./public-only-route";
 
@@ -167,6 +175,38 @@ export default function AppRoutes() {
           <Route
             path="/telemedicine/:appointmentId"
             element={<TelemedicinePage />}
+          />
+          <Route
+            path="/doctor/availability"
+            element={<DoctorAvailabilityPage />}
+          />
+          <Route
+            path="/doctor/profile"
+            element={<DoctorProfilePage />}
+          />
+          <Route
+            path="/doctors"
+            element={<DoctorDirectoryPage />}
+          />
+          <Route
+            path="/doctors/:userId"
+            element={<DoctorDetailPage />}
+          />
+          <Route
+            path="/doctor/prescriptions"
+            element={<DoctorPrescriptionListPage />}
+          />
+          <Route
+            path="/doctor/prescriptions/new"
+            element={<CreatePrescriptionPage />}
+          />
+          <Route
+            path="/patient/prescriptions"
+            element={<PatientPrescriptionsPage />}
+          />
+          <Route
+            path="/admin/verification"
+            element={<AdminDoctorVerificationPage />}
           />
         </Route>
 

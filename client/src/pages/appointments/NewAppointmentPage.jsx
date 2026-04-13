@@ -13,7 +13,7 @@ import {
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
 import { Button } from "../../components/ui/button";
-
+ 
 function todayISODate() {
   const d = new Date();
   const yyyy = d.getFullYear();
@@ -21,22 +21,7 @@ function todayISODate() {
   const dd = String(d.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 }
-
-function buildSlots() {
-  const slots = [];
-  const start = 8 * 60;
-  const end = 17 * 60;
-  const step = 30;
-
-  for (let m = start; m <= end - step; m += step) {
-    const hh = String(Math.floor(m / 60)).padStart(2, "0");
-    const mm = String(m % 60).padStart(2, "0");
-    slots.push(`${hh}:${mm}`);
-  }
-
-  return slots;
-}
-
+ 
 function addMinutes(hhmm, mins) {
   const [h, m] = hhmm.split(":").map(Number);
   const total = h * 60 + m + mins;
@@ -44,66 +29,79 @@ function addMinutes(hhmm, mins) {
   const nm = String(total % 60).padStart(2, "0");
   return `${nh}:${nm}`;
 }
-
+ 
 function getDoctorRef(doctor) {
   return String(doctor?.userId || doctor?.id || "");
 }
-
+ 
 function formatDisplayDate(isoDate) {
   if (!isoDate) return "-";
   const d = new Date(`${isoDate}T00:00:00`);
   if (Number.isNaN(d.getTime())) return isoDate;
-
+ 
   return d.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
 }
-
+ 
 function isBlockingStatus(status) {
   const s = String(status || "").toUpperCase();
   return s === "PENDING" || s === "CONFIRMED";
 }
-
+ 
 function overlaps(startA, endA, startB, endB) {
   return startA < endB && endA > startB;
 }
-
+ 
 export default function NewAppointmentPage() {
   const { user, role } = useAuth();
   const nav = useNavigate();
   const loc = useLocation();
-
+ 
   const pre = loc.state || {};
-
+ 
   const [step, setStep] = useState(1);
   const [loadingDoctors, setLoadingDoctors] = useState(true);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
-
+ 
   const [allDoctors, setAllDoctors] = useState([]);
   const [allAppointments, setAllAppointments] = useState([]);
-
+ 
   const [doctorName, setDoctorName] = useState(pre.doctorName || "");
   const [specialtyFilter, setSpecialtyFilter] = useState(
     pre.specialty && pre.specialty !== "Any" ? pre.specialty : "",
   );
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-
+ 
+  // Handle pre-selected doctor from navigation state (Doctor Directory)
+  useEffect(() => {
+    if (pre.doctorId && allDoctors.length > 0) {
+      const doc = allDoctors.find(d => getDoctorRef(d) === String(pre.doctorId));
+      if (doc) {
+        setSelectedDoctor(doc);
+        setStep(2);
+      }
+    }
+  }, [pre.doctorId, allDoctors]);
+ 
   const [date, setDate] = useState(pre.date || "");
   const [time, setTime] = useState("");
   const [appointmentType, setAppointmentType] = useState("PHYSICAL");
   const [reason, setReason] = useState("");
-
+ 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
+ 
+  const [doctorAvailability, setDoctorAvailability] = useState([]);
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
+ 
   const minDate = useMemo(() => todayISODate(), []);
-  const slots = useMemo(() => buildSlots(), []);
-
+ 
   useEffect(() => {
     let alive = true;
-
+ 
     async function loadDoctors() {
       try {
         setLoadingDoctors(true);
@@ -115,17 +113,17 @@ export default function NewAppointmentPage() {
         if (alive) setLoadingDoctors(false);
       }
     }
-
+ 
     loadDoctors();
-
+ 
     return () => {
       alive = false;
     };
   }, []);
-
+ 
   useEffect(() => {
     let alive = true;
-
+ 
     async function loadAppointments() {
       try {
         setLoadingAppointments(true);
@@ -137,32 +135,54 @@ export default function NewAppointmentPage() {
         if (alive) setLoadingAppointments(false);
       }
     }
-
+ 
     loadAppointments();
-
+ 
     return () => {
       alive = false;
     };
   }, []);
-
+ 
+  useEffect(() => {
+    if (!selectedDoctor) {
+      setDoctorAvailability([]);
+      return;
+    }
+ 
+    async function fetchAvailability() {
+      try {
+        setLoadingAvailability(true);
+        const doctorId = getDoctorRef(selectedDoctor);
+        const data = await doctorApi.listAvailability(doctorId);
+        setDoctorAvailability(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Failed to fetch doctor availability", err);
+      } finally {
+        setLoadingAvailability(false);
+      }
+    }
+ 
+    fetchAvailability();
+  }, [selectedDoctor]);
+ 
   const filteredDoctors = useMemo(() => {
     const q = doctorName.trim().toLowerCase();
-
+ 
     return allDoctors.filter((d) => {
       const fullName = String(d?.fullName || d?.name || "").toLowerCase();
       const specialization = String(
         d?.specialization || d?.specialty || "",
       ).toLowerCase();
-
+ 
       const matchesName = !q || fullName.includes(q);
       const matchesSpec =
         !specialtyFilter ||
         String(d?.specialization || d?.specialty || "") === specialtyFilter;
-
+ 
       return matchesName && matchesSpec;
     });
   }, [allDoctors, doctorName, specialtyFilter]);
-
+ 
   const specialtyOptions = useMemo(() => {
     return [
       ...new Set(
@@ -172,64 +192,74 @@ export default function NewAppointmentPage() {
       ),
     ];
   }, [allDoctors]);
-
+ 
   const availableSlots = useMemo(() => {
-    if (!date) return [];
-
-    let baseSlots = [...slots];
-
-    if (date === minDate) {
-      const now = new Date();
-      const nowMin = now.getHours() * 60 + now.getMinutes() + 15;
-
-      baseSlots = baseSlots.filter((hhmm) => {
-        const [h, m] = hhmm.split(":").map(Number);
-        return h * 60 + m >= nowMin;
-      });
-    }
-
-    if (!selectedDoctor) return baseSlots;
-
-    const doctorId = getDoctorRef(selectedDoctor);
-
-    return baseSlots.filter((slot) => {
-      const slotStart = new Date(`${date}T${slot}:00`);
-      const slotEnd = new Date(`${date}T${addMinutes(slot, 30)}:00`);
-
-      const doctorHasConflict = allAppointments.some((a) => {
-        if (!isBlockingStatus(a?.status)) return false;
-        if (String(a?.doctorId || "") !== doctorId) return false;
-
-        const apptStart = new Date(a.startTime);
-        const apptEnd = new Date(a.endTime);
-
-        return overlaps(slotStart, slotEnd, apptStart, apptEnd);
-      });
-
-      return !doctorHasConflict;
+    if (!date || !selectedDoctor) return [];
+ 
+    // Filter slots for the selected date
+    const daySlots = doctorAvailability.filter((slot) => {
+      const slotDate = slot.startTime.split("T")[0];
+      return slotDate === date && slot.status === "AVAILABLE";
     });
-  }, [date, slots, minDate, selectedDoctor, allAppointments]);
-
+ 
+    const doctorId = getDoctorRef(selectedDoctor);
+ 
+    return daySlots
+      .map((slot) => {
+        const start = slot.startTime.split("T")[1].substring(0, 5); // HH:mm
+        const end = slot.endTime.split("T")[1].substring(0, 5); // HH:mm
+        return { start, end, original: slot };
+      })
+      .filter((slot) => {
+        // Check if today and in the future
+        if (date === minDate) {
+          const now = new Date();
+          const nowMin = now.getHours() * 60 + now.getMinutes() + 15;
+          const [h, m] = slot.start.split(":").map(Number);
+          if (h * 60 + m < nowMin) return false;
+        }
+ 
+        const slotStart = new Date(`${date}T${slot.start}:00`);
+        const slotEnd = new Date(`${date}T${slot.end}:00`);
+ 
+        const doctorHasConflict = allAppointments.some((a) => {
+          if (!isBlockingStatus(a?.status)) return false;
+          if (String(a?.doctorId || "") !== doctorId) return false;
+ 
+          const apptStart = new Date(a.startTime);
+          const apptEnd = new Date(a.endTime);
+ 
+          return overlaps(slotStart, slotEnd, apptStart, apptEnd);
+        });
+ 
+        return !doctorHasConflict;
+      });
+  }, [date, doctorAvailability, minDate, selectedDoctor, allAppointments]);
+ 
   const selectedWindow = useMemo(() => {
     if (!date || !time) return null;
+    const slot = availableSlots.find((s) => s.start === time);
+    if (!slot) return null;
+ 
     return {
-      start: new Date(`${date}T${time}:00`),
-      end: new Date(`${date}T${addMinutes(time, 30)}:00`),
+      start: new Date(`${date}T${slot.start}:00`),
+      end: new Date(`${date}T${slot.end}:00`),
+      original: slot.original,
     };
-  }, [date, time]);
-
+  }, [date, time, availableSlots]);
+ 
   const doctorClash = useMemo(() => {
     if (!selectedDoctor || !selectedWindow) return false;
-
+ 
     const doctorId = getDoctorRef(selectedDoctor);
-
+ 
     return allAppointments.some((a) => {
       if (!isBlockingStatus(a?.status)) return false;
       if (String(a?.doctorId || "") !== doctorId) return false;
-
+ 
       const apptStart = new Date(a.startTime);
       const apptEnd = new Date(a.endTime);
-
+ 
       return overlaps(
         selectedWindow.start,
         selectedWindow.end,
@@ -238,17 +268,17 @@ export default function NewAppointmentPage() {
       );
     });
   }, [selectedDoctor, selectedWindow, allAppointments]);
-
+ 
   const patientClash = useMemo(() => {
     if (!user?.userId || !selectedWindow) return false;
-
+ 
     return allAppointments.some((a) => {
       if (!isBlockingStatus(a?.status)) return false;
       if (String(a?.patientId || "") !== String(user.userId)) return false;
-
+ 
       const apptStart = new Date(a.startTime);
       const apptEnd = new Date(a.endTime);
-
+ 
       return overlaps(
         selectedWindow.start,
         selectedWindow.end,
@@ -257,18 +287,18 @@ export default function NewAppointmentPage() {
       );
     });
   }, [user?.userId, selectedWindow, allAppointments]);
-
+ 
   useEffect(() => {
     if (!date) {
       setTime("");
       return;
     }
-
-    if (time && !availableSlots.includes(time)) {
+ 
+    if (time && !availableSlots.some(s => s.start === time)) {
       setTime("");
     }
   }, [date, time, availableSlots]);
-
+ 
   const step1Valid = Boolean(selectedDoctor);
   const step2Valid = Boolean(
     user?.userId &&
@@ -278,10 +308,10 @@ export default function NewAppointmentPage() {
     !doctorClash &&
     !patientClash,
   );
-
+ 
   function next() {
     setError("");
-
+ 
     if (step === 1) {
       if (!step1Valid) {
         setError("Select a doctor to continue.");
@@ -290,60 +320,60 @@ export default function NewAppointmentPage() {
       setStep(2);
       return;
     }
-
+ 
     if (step === 2) {
       if (!date || !time) {
         setError("Select both date and time.");
         return;
       }
-
+ 
       if (doctorClash) {
         setError("This doctor already has an appointment in that time slot.");
         return;
       }
-
+ 
       if (patientClash) {
         setError("You already have another appointment in that time slot.");
         return;
       }
-
+ 
       setStep(3);
     }
   }
-
+ 
   function back() {
     setError("");
     if (step > 1) setStep(step - 1);
   }
-
+ 
   async function confirm() {
     if (!user?.userId) {
       setError("You must be logged in as a patient.");
       return;
     }
-
+ 
     if (!selectedDoctor || !date || !time) {
       setError("Complete the booking details first.");
       return;
     }
-
+ 
     if (doctorClash) {
       setError("This doctor already has an appointment in that time slot.");
       return;
     }
-
+ 
     if (patientClash) {
       setError("You already have another appointment in that time slot.");
       return;
     }
-
+ 
     setError("");
     setSaving(true);
-
+ 
     try {
-      const startTime = `${date}T${time}:00`;
-      const endTime = `${date}T${addMinutes(time, 30)}:00`;
-
+      const startTime = selectedWindow.start.toISOString().split('.')[0];
+      const endTime = selectedWindow.end.toISOString().split('.')[0];
+ 
       const payload = {
         patientId: user.userId,
         doctorId: getDoctorRef(selectedDoctor),
@@ -353,8 +383,9 @@ export default function NewAppointmentPage() {
         endTime,
         reason: reason.trim() || null,
         appointmentType,
+        availabilitySlotId: selectedWindow.original.id,
       };
-
+ 
       await appointmentApi.create(payload);
       nav("/appointments");
     } catch (e) {
@@ -363,7 +394,7 @@ export default function NewAppointmentPage() {
       setSaving(false);
     }
   }
-
+ 
   if (role !== "PATIENT") {
     return (
       <Card className="rounded-[28px] border border-slate-200 shadow-sm">
@@ -373,12 +404,12 @@ export default function NewAppointmentPage() {
       </Card>
     );
   }
-
+ 
   const selectedDoctorName =
     selectedDoctor?.fullName || selectedDoctor?.name || "Doctor";
   const selectedDoctorSpec =
     selectedDoctor?.specialization || selectedDoctor?.specialty || "-";
-
+ 
   return (
     <Card className="rounded-[28px] border border-slate-200 shadow-sm">
       <CardHeader className="border-b border-slate-200 pb-5">
@@ -395,7 +426,7 @@ export default function NewAppointmentPage() {
                   : "Confirm appointment"}
             </CardTitle>
           </div>
-
+ 
           <div className="flex items-center gap-2">
             <StepDot active={step >= 1} />
             <StepDot active={step >= 2} />
@@ -403,14 +434,14 @@ export default function NewAppointmentPage() {
           </div>
         </div>
       </CardHeader>
-
+ 
       <CardContent className="pt-5">
         {error ? (
           <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </div>
         ) : null}
-
+ 
         {step === 1 ? (
           <div className="space-y-5">
             <div className="grid gap-3 md:grid-cols-2">
@@ -425,7 +456,7 @@ export default function NewAppointmentPage() {
                   className="h-12 rounded-2xl"
                 />
               </div>
-
+ 
               <div>
                 <div className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-600">
                   Specialty
@@ -444,7 +475,7 @@ export default function NewAppointmentPage() {
                 </select>
               </div>
             </div>
-
+ 
             <div>
               {loadingDoctors ? (
                 <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-600">
@@ -462,7 +493,7 @@ export default function NewAppointmentPage() {
                     const displayName = d?.fullName || d?.name || "Doctor";
                     const displaySpec =
                       d?.specialization || d?.specialty || "-";
-
+ 
                     return (
                       <button
                         key={String(d?.id || d?.userId)}
@@ -483,14 +514,14 @@ export default function NewAppointmentPage() {
                             <div className="mt-1 text-sm text-slate-600">
                               {displaySpec}
                             </div>
-
+ 
                             {d?.hospital ? (
                               <div className="mt-3 text-sm text-slate-700">
                                 {d.hospital}
                               </div>
                             ) : null}
                           </div>
-
+ 
                           <div
                             className={[
                               "mt-1 h-6 w-6 shrink-0 rounded-full border-2 transition",
@@ -506,7 +537,7 @@ export default function NewAppointmentPage() {
                 </div>
               )}
             </div>
-
+ 
             <div className="flex justify-end">
               <Button
                 onClick={next}
@@ -518,7 +549,7 @@ export default function NewAppointmentPage() {
             </div>
           </div>
         ) : null}
-
+ 
         {step === 2 ? (
           <div className="space-y-5">
             <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
@@ -528,7 +559,7 @@ export default function NewAppointmentPage() {
               </div>
               <div className="text-sm text-slate-600">{selectedDoctorSpec}</div>
             </div>
-
+ 
             <div className="grid gap-4 md:grid-cols-2">
               <Field label="Patient">
                 <Input
@@ -537,7 +568,7 @@ export default function NewAppointmentPage() {
                   className="h-12 rounded-2xl"
                 />
               </Field>
-
+ 
               <Field label="Appointment type">
                 <select
                   className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:ring-2 focus:ring-emerald-200"
@@ -548,7 +579,7 @@ export default function NewAppointmentPage() {
                   <option value="ONLINE">ONLINE</option>
                 </select>
               </Field>
-
+ 
               <Field label="Date">
                 <Input
                   type="date"
@@ -558,32 +589,32 @@ export default function NewAppointmentPage() {
                   className="h-12 rounded-2xl"
                 />
               </Field>
-
+ 
               <Field label="Time">
                 <select
                   className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:ring-2 focus:ring-emerald-200"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  disabled={!date || loadingAppointments}
+                  disabled={!date || loadingAppointments || loadingAvailability}
                 >
                   <option value="">
                     {!date
                       ? "Select date first"
-                      : loadingAppointments
+                      : loadingAppointments || loadingAvailability
                         ? "Checking availability..."
                         : availableSlots.length === 0
                           ? "No available slots"
                           : "Select time"}
                   </option>
                   {availableSlots.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
+                    <option key={slot.start} value={slot.start}>
+                      {slot.start} - {slot.end}
                     </option>
                   ))}
                 </select>
               </Field>
             </div>
-
+ 
             <Field label="Reason (optional)">
               <Textarea
                 value={reason}
@@ -592,19 +623,19 @@ export default function NewAppointmentPage() {
                 className="min-h-[110px] rounded-2xl"
               />
             </Field>
-
+ 
             {doctorClash ? (
               <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 This doctor already has another appointment in this time slot.
               </div>
             ) : null}
-
+ 
             {patientClash ? (
               <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 You already have another appointment in this time slot.
               </div>
             ) : null}
-
+ 
             <div className="flex items-center justify-between">
               <Button
                 variant="outline"
@@ -613,7 +644,7 @@ export default function NewAppointmentPage() {
               >
                 Back
               </Button>
-
+ 
               <Button
                 onClick={next}
                 disabled={!step2Valid}
@@ -624,14 +655,14 @@ export default function NewAppointmentPage() {
             </div>
           </div>
         ) : null}
-
+ 
         {step === 3 ? (
           <div className="mx-auto max-w-2xl space-y-5">
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
               <div className="mb-4 text-[1.05rem] font-extrabold text-slate-950">
                 Review
               </div>
-
+ 
               <div className="space-y-3">
                 <CompactRow label="Patient" value={user?.email || "-"} />
                 <CompactRow label="Doctor" value={selectedDoctorName} />
@@ -640,12 +671,12 @@ export default function NewAppointmentPage() {
                 <CompactRow label="Date" value={formatDisplayDate(date)} />
                 <CompactRow
                   label="Time"
-                  value={`${time} - ${addMinutes(time, 30)}`}
+                  value={selectedWindow ? `${time} - ${selectedWindow.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : "-"}
                 />
                 <CompactRow label="Reason" value={reason.trim() || "-"} />
               </div>
             </div>
-
+ 
             <div className="flex items-center justify-between">
               <Button
                 variant="outline"
@@ -655,7 +686,7 @@ export default function NewAppointmentPage() {
               >
                 Back
               </Button>
-
+ 
               <Button
                 onClick={confirm}
                 disabled={saving}
@@ -670,7 +701,7 @@ export default function NewAppointmentPage() {
     </Card>
   );
 }
-
+ 
 function StepDot({ active }) {
   return (
     <div
@@ -682,7 +713,7 @@ function StepDot({ active }) {
     />
   );
 }
-
+ 
 function Field({ label, children }) {
   return (
     <div>
@@ -693,7 +724,7 @@ function Field({ label, children }) {
     </div>
   );
 }
-
+ 
 function CompactRow({ label, value }) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3">

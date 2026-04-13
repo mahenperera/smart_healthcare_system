@@ -5,6 +5,7 @@ import com.shc.doctor.entity.Doctor;
 import com.shc.doctor.exception.ResourceNotFoundException;
 import com.shc.doctor.mapper.DoctorMapper;
 import com.shc.doctor.repository.DoctorRepository;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +15,11 @@ import java.util.UUID;
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository repo;
+    private final CloudinaryService cloudinaryService;
 
-    public DoctorServiceImpl(DoctorRepository repo) {
+    public DoctorServiceImpl(DoctorRepository repo, CloudinaryService cloudinaryService) {
         this.repo = repo;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -46,8 +49,22 @@ public class DoctorServiceImpl implements DoctorService {
         d.setQualifications(dto.getQualifications());
         d.setExperienceYears(dto.getExperienceYears());
         d.setBio(dto.getBio());
+        d.setSlmcNumber(dto.getSlmcNumber());
+        d.setConsultationFee(dto.getConsultationFee());
+        d.setProfileImageUrl(dto.getProfileImageUrl());
 
         return repo.save(d);
+    }
+
+    @Override
+    public String updateProfileImage(UUID id, MultipartFile file) {
+        Doctor doctor = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+        String imageUrl = cloudinaryService.uploadImage(file);
+        doctor.setProfileImageUrl(imageUrl);
+        repo.save(doctor);
+        return imageUrl;
     }
 
     @Override

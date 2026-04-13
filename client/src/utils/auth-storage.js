@@ -9,6 +9,7 @@ export function setAuthSession(authResponse) {
     ? {
         userId: authResponse.userId || "",
         email: authResponse.email || "",
+        fullName: authResponse.fullName || "",
         role: authResponse.role || "",
         verified: Boolean(authResponse.verified),
         message: authResponse.message || "",

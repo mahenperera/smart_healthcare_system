@@ -22,7 +22,7 @@ function statusClass(status) {
   if (s === "COMPLETED") {
     return "border border-blue-200 bg-blue-50 text-blue-700";
   }
-  if (s === "CANCELLED") {
+  if (s === "CANCELLED" || s === "REJECTED") {
     return "border border-rose-200 bg-rose-50 text-rose-700";
   }
 
@@ -182,11 +182,26 @@ export default function AppointmentsListPage() {
     }
   }
 
-  async function handleStatus(id, status) {
+  async function handleStatus(id, newStatus) {
     try {
       setActionLoadingId(id);
       setError("");
-      await appointmentApi.updateStatus(id, status);
+      await appointmentApi.updateStatus(id, newStatus);
+ 
+      // If accepted, mark the availability slot as BOOKED
+      if (newStatus === "CONFIRMED") {
+        const appt = rows.find((r) => getAppointmentId(r) === id);
+        if (appt?.availabilitySlotId) {
+          try {
+            await doctorApi.updateAvailability(appt.availabilitySlotId, {
+              status: "BOOKED",
+            });
+          } catch (err) {
+            console.error("Failed to mark slot as BOOKED on acceptance", err);
+          }
+        }
+      }
+ 
       await loadData(true);
     } catch (e) {
       setError(e?.message || "Failed to update appointment status.");
@@ -255,6 +270,7 @@ export default function AppointmentsListPage() {
             <option value="">All statuses</option>
             <option value="PENDING">Pending</option>
             <option value="CONFIRMED">Confirmed</option>
+            <option value="REJECTED">Rejected</option>
             <option value="COMPLETED">Completed</option>
             <option value="CANCELLED">Cancelled</option>
           </select>
@@ -366,14 +382,27 @@ export default function AppointmentsListPage() {
                       ) : null}
 
                       {role === "DOCTOR" && status === "PENDING" ? (
-                        <Button
-                          onClick={() =>
-                            handleStatus(appointmentId, "CONFIRMED")
-                          }
-                          disabled={busy}
-                        >
-                          {busy ? "Working..." : "Confirm"}
-                        </Button>
+                        <div className="flex flex-row gap-2">
+                          <Button
+                            onClick={() =>
+                              handleStatus(appointmentId, "CONFIRMED")
+                            }
+                            disabled={busy}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                          >
+                            {busy ? "Working..." : "Accept"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              handleStatus(appointmentId, "REJECTED")
+                            }
+                            disabled={busy}
+                            className="border-rose-200 text-rose-600 hover:bg-rose-50"
+                          >
+                            {busy ? "Working..." : "Reject"}
+                          </Button>
+                        </div>
                       ) : null}
 
                       {role === "DOCTOR" && status === "CONFIRMED" ? (

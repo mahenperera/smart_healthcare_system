@@ -15,7 +15,7 @@ public interface AuthRepository extends JpaRepository<AppUser, UUID> {
 
     boolean existsByEmail(String email);
 
-    List<AppUser> findByRoleAndVerified(String role, boolean verified);
+    List<AppUser> findByRoleAndVerifiedAndRejected(String role, boolean verified, boolean rejected);
 
     List<AppUser> findByRole(String role);
 }

@@ -27,6 +27,9 @@ public class AppUser {
     @Column(nullable = false)
     private boolean verified = false; // for doctor verification by admin
 
+    @Column
+    private boolean rejected = false; // for doctor account rejection by admin
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -93,6 +96,14 @@ public class AppUser {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public boolean isRejected() {
+        return rejected;
+    }
+
+    public void setRejected(boolean rejected) {
+        this.rejected = rejected;
     }
 
     public LocalDateTime getCreatedAt() {

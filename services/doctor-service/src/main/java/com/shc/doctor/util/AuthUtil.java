@@ -11,9 +11,8 @@ public class AuthUtil {
 
     public String getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getDetails() instanceof Map) {
-            Map<String, String> details = (Map<String, String>) auth.getDetails();
-            return details.get("userId");
+        if (auth != null && auth.getDetails() instanceof Map<?, ?> details) {
+            return (String) details.get("userId");
         }
         return null;
     }
@@ -25,9 +24,8 @@ public class AuthUtil {
 
     public String getCurrentUserRole() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getDetails() instanceof Map) {
-            Map<String, String> details = (Map<String, String>) auth.getDetails();
-            return details.get("role");
+        if (auth != null && auth.getDetails() instanceof Map<?, ?> details) {
+            return (String) details.get("role");
         }
         return null;
     }

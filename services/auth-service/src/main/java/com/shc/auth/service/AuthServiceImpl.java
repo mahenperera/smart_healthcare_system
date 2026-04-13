@@ -3,10 +3,7 @@ package com.shc.auth.service;
 import com.shc.auth.config.JwtService;
 import com.shc.auth.dto.*;
 import com.shc.auth.entity.AppUser;
-import com.shc.auth.exception.AccountDisabledException;
-import com.shc.auth.exception.AccountLockedException;
-import com.shc.auth.exception.DuplicateResourceException;
-import com.shc.auth.exception.InvalidCredentialsException;
+import com.shc.auth.exception.*;
 import com.shc.auth.repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -67,6 +67,7 @@ public class AuthServiceImpl implements AuthService {
                 return new AuthResponse(
                         user.getId().toString(),
                         user.getEmail(),
+                        request.getName(),
                         user.getRole(),
                         null,
                         false,
@@ -79,6 +80,7 @@ public class AuthServiceImpl implements AuthService {
                 return new AuthResponse(
                         user.getId().toString(),
                         user.getEmail(),
+                        request.getName(),
                         user.getRole(),
                         token,
                         true,
@@ -101,6 +103,11 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidCredentialsException("Invalid email or password");
         }
 
+        // Check if doctor is rejected
+        if ("DOCTOR".equalsIgnoreCase(user.getRole()) && user.isRejected()) {
+            throw new AccountRejectedException("Your application has been rejected by the administrator. Please contact support for more details.");
+        }
+
         // Check if doctor is verified
         if ("DOCTOR".equalsIgnoreCase(user.getRole()) && !user.isVerified()) {
             throw new AccountLockedException("Your account is pending admin verification");
@@ -114,9 +121,12 @@ public class AuthServiceImpl implements AuthService {
         // Generate JWT token using your JwtService
         String token = jwtService.generateToken(user);
 
+        String fullName = fetchFullName(user.getId().toString(), user.getRole());
+
         return new AuthResponse(
                 user.getId().toString(),
                 user.getEmail(),
+                fullName,
                 user.getRole(),
                 token,
                 user.isVerified(),
@@ -138,18 +148,22 @@ public class AuthServiceImpl implements AuthService {
         if (request.isApproved()) {
             user.setVerified(true);
             user.setEnabled(true);
+            user.setRejected(false);
         } else {
             user.setVerified(false);
             user.setEnabled(false);
+            user.setRejected(true); // Mark as rejected
         }
 
         authRepository.save(user);
 
         String message = request.isApproved() ? "Doctor verified successfully" : "Doctor verification rejected";
+        String fullName = fetchFullName(user.getId().toString(), user.getRole());
 
         return new AuthResponse(
                 user.getId().toString(),
                 user.getEmail(),
+                fullName,
                 user.getRole(),
                 null,
                 user.isVerified(),
@@ -159,7 +173,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public List<AppUser> getPendingDoctors() {
-        return authRepository.findByRoleAndVerified("DOCTOR", false);
+        return authRepository.findByRoleAndVerifiedAndRejected("DOCTOR", false, false);
     }
 
     @Override
@@ -195,5 +209,24 @@ public class AuthServiceImpl implements AuthService {
         patientRequest.setPhone(request.getPhone());
 
         restTemplate.postForEntity(patientServiceUrl, patientRequest, String.class);
+    }
+
+    private String fetchFullName(String userId, String role) {
+        if ("ADMIN".equalsIgnoreCase(role)) return null;
+        try {
+            ParameterizedTypeReference<Map<String, Object>> typeRef = new ParameterizedTypeReference<Map<String, Object>>() {};
+            if ("DOCTOR".equalsIgnoreCase(role)) {
+                String url = doctorServiceUrl + "/" + userId;
+                Map<String, Object> response = restTemplate.exchange(url, HttpMethod.GET, null, typeRef).getBody();
+                return response != null ? (String) response.get("fullName") : null;
+            } else if ("PATIENT".equalsIgnoreCase(role)) {
+                String url = patientServiceUrl + "/user/" + userId;
+                Map<String, Object> response = restTemplate.exchange(url, HttpMethod.GET, null, typeRef).getBody();
+                return response != null ? (String) response.get("name") : null;
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to fetch full name for user " + userId + ": " + e.getMessage());
+        }
+        return null;
     }
 }

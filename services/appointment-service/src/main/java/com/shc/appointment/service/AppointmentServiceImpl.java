@@ -218,6 +218,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private boolean shouldIgnoreForClash(Appointment appointment) {
         return appointment.getStatus() == AppointmentStatus.CANCELLED
+                || appointment.getStatus() == AppointmentStatus.REJECTED
                 || appointment.getStatus() == AppointmentStatus.COMPLETED;
     }
 }

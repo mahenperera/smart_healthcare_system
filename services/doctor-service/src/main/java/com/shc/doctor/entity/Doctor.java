@@ -26,6 +26,9 @@ public class Doctor {
 
     @Column(length = 1000)
     private String bio;
+ 
+    private Double consultationFee;
+    private String profileImageUrl;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -111,6 +114,22 @@ public class Doctor {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+ 
+    public Double getConsultationFee() {
+        return consultationFee;
+    }
+ 
+    public void setConsultationFee(Double consultationFee) {
+        this.consultationFee = consultationFee;
+    }
+ 
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+ 
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public LocalDateTime getCreatedAt() {

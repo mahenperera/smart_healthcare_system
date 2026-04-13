@@ -211,7 +211,8 @@
 // client/src/pages/home/HomePage.jsx
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Calendar, Search, Stethoscope, Video, Hospital } from "lucide-react";
+import { Calendar, Search, Stethoscope, Video, Hospital, Clock, FileText, User } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 import {
   Card,
   CardContent,
@@ -232,6 +233,7 @@ const specialties = [
 
 export default function HomePage() {
   const nav = useNavigate();
+  const { role } = useAuth();
   const [doctorName, setDoctorName] = useState("");
   const [specialty, setSpecialty] = useState("Any");
   const [date, setDate] = useState("");
@@ -253,19 +255,29 @@ export default function HomePage() {
 
   return (
     <div>
-      <section className="bg-gradient-to-b from-brand-50 to-slate-50">
+      <section className="">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="grid gap-6 items-stretch lg:grid-cols-12">
-            <div className="lg:col-span-7">
+            <div className={role === "DOCTOR" ? "lg:col-span-12" : "lg:col-span-7"}>
               <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
                 <div className="text-4xl font-extrabold leading-tight">
-                  Book appointments <span className="text-brand-700">fast</span>
-                  , calm, and simple.
+                  {role === "DOCTOR" ? (
+                    <>
+                      Manage your clinic <span className="text-emerald-700">fast</span>
+                      , calm, and simple.
+                    </>
+                  ) : (
+                    <>
+                      Book appointments <span className="text-emerald-700">fast</span>
+                      , calm, and simple.
+                    </>
+                  )}
                 </div>
 
                 <div className="mt-3 text-slate-600">
-                  Search a doctor, pick date &amp; time, confirm. Online or
-                  physical.
+                  {role === "DOCTOR" 
+                    ? "View your schedule, manage virtual or physical consultations, and handle patient records effortlessly."
+                    : "Search a doctor, pick date & time, confirm. Online or physical."}
                 </div>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -288,8 +300,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="lg:col-span-5">
-              <Card className="rounded-3xl border-brand-100">
+            {role !== "DOCTOR" && (
+              <div className="lg:col-span-5">
+                <Card className="rounded-3xl border-emerald-100">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Search size={18} />
@@ -342,7 +355,7 @@ export default function HomePage() {
                       />
                     </div>
 
-                    <Button variant="brand" className="w-full">
+                    <Button variant="default" className="w-full">
                       Search &amp; book appointment
                     </Button>
 
@@ -354,6 +367,7 @@ export default function HomePage() {
                 </CardContent>
               </Card>
             </div>
+            )}
           </div>
 
           <div className="mt-8">
@@ -362,33 +376,61 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <QuickTile
-                title="Doctor Channeling"
-                desc="Book an appointment"
-                icon={<Stethoscope size={22} />}
-                onClick={() => nav("/appointments/new")}
-              />
-
-              <QuickTile
-                title="Online Consultation"
-                desc="Video-ready booking"
-                icon={<Video size={22} />}
-                onClick={() => nav("/appointments")}
-              />
-
-              <QuickTile
-                title="Appointments"
-                desc="View / manage bookings"
-                icon={<Calendar size={22} />}
-                onClick={() => nav("/appointments")}
-              />
-
-              <QuickTile
-                title="Search"
-                desc="Find doctor & time"
-                icon={<Search size={22} />}
-                onClick={() => nav("/appointments/new")}
-              />
+              {role === "DOCTOR" ? (
+                <>
+                  <QuickTile
+                    title="Appointments"
+                    desc="View & manage schedule"
+                    icon={<Calendar size={22} />}
+                    onClick={() => nav("/appointments")}
+                  />
+                  <QuickTile
+                    title="Availability"
+                    desc="Set visiting hours"
+                    icon={<Clock size={22} />}
+                    onClick={() => nav("/doctor/availability")}
+                  />
+                  <QuickTile
+                    title="Prescriptions"
+                    desc="Issue medical records"
+                    icon={<FileText size={22} />}
+                    onClick={() => nav("/doctor/prescriptions")}
+                  />
+                  <QuickTile
+                    title="My Profile"
+                    desc="Update your details"
+                    icon={<User size={22} />}
+                    onClick={() => nav("/doctor/profile")}
+                  />
+                </>
+              ) : (
+                <>
+                  <QuickTile
+                    title="Doctor Channeling"
+                    desc="Book an appointment"
+                    icon={<Stethoscope size={22} />}
+                    onClick={() => nav("/appointments/new")}
+                  />
+                  <QuickTile
+                    title="Online Consultation"
+                    desc="Video-ready booking"
+                    icon={<Video size={22} />}
+                    onClick={() => nav("/appointments")}
+                  />
+                  <QuickTile
+                    title="Appointments"
+                    desc="View / manage bookings"
+                    icon={<Calendar size={22} />}
+                    onClick={() => nav("/appointments")}
+                  />
+                  <QuickTile
+                    title="Search"
+                    desc="Find doctor & time"
+                    icon={<Search size={22} />}
+                    onClick={() => nav("/appointments/new")}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -416,7 +458,7 @@ function QuickTile({ title, desc, icon, onClick }) {
       onClick={onClick}
       className="text-left rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow"
     >
-      <div className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-700">
+      <div className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-50 text-emerald-700">
         {icon}
       </div>
       <div className="mt-3 font-extrabold">{title}</div>

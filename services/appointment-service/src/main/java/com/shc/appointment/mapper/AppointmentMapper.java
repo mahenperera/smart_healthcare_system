@@ -19,7 +19,8 @@ public class AppointmentMapper {
 
         // Default to PHYSICAL if not provided
         a.setAppointmentType(req.getAppointmentType() != null ? req.getAppointmentType() : AppointmentType.PHYSICAL);
-
+        a.setAvailabilitySlotId(req.getAvailabilitySlotId());
+ 
         // status default handled in entity
         return a;
     }
@@ -46,6 +47,7 @@ public class AppointmentMapper {
         res.setReason(a.getReason());
         res.setCreatedAt(a.getCreatedAt());
         res.setUpdatedAt(a.getUpdatedAt());
+        res.setAvailabilitySlotId(a.getAvailabilitySlotId());
         return res;
     }
 }

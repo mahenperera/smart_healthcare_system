@@ -8,7 +8,7 @@ import com.shc.doctor.repository.DoctorRepository;
 import com.shc.doctor.repository.PrescriptionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,14 +19,14 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     private final PrescriptionRepository prescriptionRepo;
     private final DoctorRepository doctorRepo;
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepo,
                                    DoctorRepository doctorRepo,
-                                   ObjectMapper objectMapper) {
+                                   JsonMapper jsonMapper) {
         this.prescriptionRepo = prescriptionRepo;
         this.doctorRepo = doctorRepo;
-        this.objectMapper = objectMapper;
+        this.jsonMapper = jsonMapper;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
         // Convert medications list to JSON string
         try {
-            prescription.setMedications(objectMapper.writeValueAsString(dto.getMedications()));
+            prescription.setMedications(jsonMapper.writeValueAsString(dto.getMedications()));
         } catch (Exception e) {
             throw new RuntimeException("Error processing medications", e);
         }
@@ -78,7 +78,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         prescription.setSymptoms(dto.getSymptoms());
 
         try {
-            prescription.setMedications(objectMapper.writeValueAsString(dto.getMedications()));
+            prescription.setMedications(jsonMapper.writeValueAsString(dto.getMedications()));
         } catch (Exception e) {
             throw new RuntimeException("Error processing medications", e);
         }
@@ -173,9 +173,9 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
         // Convert JSON string back to list
         try {
-            List<PrescriptionDTO.MedicationItem> medications = objectMapper.readValue(
+            List<PrescriptionDTO.MedicationItem> medications = jsonMapper.readValue(
                     prescription.getMedications(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, PrescriptionDTO.MedicationItem.class)
+                    jsonMapper.getTypeFactory().constructCollectionType(List.class, PrescriptionDTO.MedicationItem.class)
             );
             dto.setMedications(medications);
         } catch (Exception e) {

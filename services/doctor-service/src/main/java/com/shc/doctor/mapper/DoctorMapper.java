@@ -17,6 +17,8 @@ public class DoctorMapper {
         d.setExperienceYears(dto.getExperienceYears() == null ? 0 : dto.getExperienceYears());
         d.setQualifications(dto.getQualifications());
         d.setBio(dto.getBio());
+        d.setConsultationFee(dto.getConsultationFee());
+        d.setProfileImageUrl(dto.getProfileImageUrl());
 
         return d;
     }

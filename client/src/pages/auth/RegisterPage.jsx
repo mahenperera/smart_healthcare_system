@@ -1,6 +1,21 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
+  User,
+  Mail,
+  Lock,
+  Phone,
+  ShieldCheck,
+  Stethoscope,
+  Hospital,
+  GraduationCap,
+  IdCard,
+  ArrowRight,
+  CheckCircle2,
+  AlertCircle,
+  Users
+} from "lucide-react";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -72,192 +87,219 @@ export default function RegisterPage() {
       );
 
       setTimeout(() => {
-        nav("/", { replace: true });
-      }, 1200);
+        nav("/login", { replace: true });
+      }, 2000);
     } catch (error) {
       setErr(error.message || "Registration failed.");
     }
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-slate-50">
-      <div className="mx-auto max-w-2xl px-4 py-10">
-        <Card className="rounded-3xl">
-          <CardHeader>
-            <CardDescription>Auth</CardDescription>
-            <CardTitle>Create account</CardTitle>
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 py-12">
+      <div className="w-full max-w-2xl">
+        {/* Branding */}
+        <div className="flex flex-col items-center mb-10">
+          <div className="h-16 w-16 rounded-[24px] bg-emerald-600 flex items-center justify-center text-white shadow-2xl shadow-emerald-200 mb-4 transform hover:-rotate-6 transition-transform">
+            <ShieldCheck size={32} />
+          </div>
+          <h2 className="text-3xl font-black text-slate-950 tracking-tight text-center">Join Our Medical Network</h2>
+          <p className="text-slate-500 font-bold text-sm mt-1 uppercase tracking-widest">Create your secure healthcare identity</p>
+        </div>
+
+        <Card className="rounded-[40px] border-slate-200 shadow-2xl shadow-slate-200/40 overflow-hidden bg-white border-2">
+          <CardHeader className="bg-slate-50 border-b border-slate-100 p-8 text-center flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-left">
+              <CardTitle className="text-2xl font-black text-slate-900">Registration</CardTitle>
+              <CardDescription className="font-bold text-slate-400 mt-1 uppercase tracking-tighter">Step into a new era of care</CardDescription>
+            </div>
+
+            <div className="flex bg-slate-200/50 p-1.5 rounded-2xl">
+              <button
+                type="button"
+                onClick={() => setRole("PATIENT")}
+                className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${role === "PATIENT" ? "bg-white text-emerald-600 shadow-md translate-y-[-1px]" : "text-slate-500 hover:bg-slate-100"}`}
+              >
+                Patient
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("DOCTOR")}
+                className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${role === "DOCTOR" ? "bg-white text-emerald-600 shadow-md translate-y-[-1px]" : "text-slate-500 hover:bg-slate-100"}`}
+              >
+                Doctor
+              </button>
+            </div>
           </CardHeader>
 
-          <CardContent>
-            <form onSubmit={submit} className="grid gap-4">
-              {err ? (
-                <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                  {err}
-                </div>
-              ) : null}
-
-              {success ? (
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
-                  {success}
-                </div>
-              ) : null}
-
-              <div className="grid gap-3 md:grid-cols-2">
-                <div>
-                  <div className="mb-1 text-xs font-bold text-slate-700">
-                    Role
+          <CardContent className="p-8">
+            <form onSubmit={submit} className="grid gap-8">
+              {err && (
+                <div className="rounded-3xl border-2 border-rose-100 bg-rose-50/50 p-5 flex items-start gap-4 animate-in fade-in zoom-in duration-300">
+                  <div className="h-10 w-10 shrink-0 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-600">
+                    <AlertCircle size={20} />
                   </div>
-                  <select
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-emerald-200"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                  >
-                    <option value="PATIENT">PATIENT</option>
-                    <option value="DOCTOR">DOCTOR</option>
-                  </select>
-                </div>
-
-                <div>
-                  <div className="mb-1 text-xs font-bold text-slate-700">
-                    Full name
+                  <div>
+                    <p className="text-xs font-black text-rose-600 uppercase tracking-widest mb-1">Registration Error</p>
+                    <p className="text-sm font-bold text-rose-900 leading-relaxed">{err}</p>
                   </div>
-                  <Input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your full name"
-                    required
-                  />
                 </div>
+              )}
 
-                <div>
-                  <div className="mb-1 text-xs font-bold text-slate-700">
-                    Email
+              {success && (
+                <div className="rounded-3xl border-2 border-emerald-100 bg-emerald-50/50 p-5 flex items-start gap-4 animate-in fade-in zoom-in duration-300">
+                  <div className="h-10 w-10 shrink-0 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                    <CheckCircle2 size={20} />
                   </div>
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <div className="mb-1 text-xs font-bold text-slate-700">
-                    Phone
+                  <div>
+                    <p className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-1">Account Created</p>
+                    <p className="text-sm font-bold text-emerald-900 leading-relaxed">{success}</p>
                   </div>
-                  <Input
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="07xxxxxxxx"
-                    required
-                  />
                 </div>
+              )}
 
-                <div>
-                  <div className="mb-1 text-xs font-bold text-slate-700">
-                    Password
-                  </div>
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Individual Identitiy */}
+                <AuthInput
+                  label="Full Name"
+                  icon={<User size={18} />}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Dr. John Watson"
+                />
 
-                <div>
-                  <div className="mb-1 text-xs font-bold text-slate-700">
-                    Confirm password
-                  </div>
-                  <Input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                  />
-                </div>
+                <AuthInput
+                  label="Email Address"
+                  icon={<Mail size={18} />}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                />
 
+                <AuthInput
+                  label="Contact Number"
+                  icon={<Phone size={18} />}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="07xxxxxxxx"
+                />
+
+                {/* Role Specific Fields */}
                 {role === "PATIENT" ? (
                   <>
-                    <div>
-                      <div className="mb-1 text-xs font-bold text-slate-700">
-                        NIC
+                    <AuthInput
+                      label="National ID (NIC)"
+                      icon={<IdCard size={18} />}
+                      value={nic}
+                      onChange={(e) => setNic(e.target.value)}
+                      placeholder="9xxxxxxxV"
+                    />
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Gender Identity</label>
+                      <div className="relative">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300">
+                          <Users size={18} />
+                        </div>
+                        <select
+                          className="h-14 w-full pl-12 pr-4 rounded-2xl border-2 border-slate-50 bg-slate-50/50 font-bold focus:bg-white focus:border-emerald-100 transition-all text-slate-900 outline-none"
+                          value={gender}
+                          onChange={(e) => setGender(e.target.value)}
+                        >
+                          <option value="MALE">MALE</option>
+                          <option value="FEMALE">FEMALE</option>
+                          <option value="OTHER">OTHER</option>
+                        </select>
                       </div>
-                      <Input
-                        value={nic}
-                        onChange={(e) => setNic(e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <div className="mb-1 text-xs font-bold text-slate-700">
-                        Gender
-                      </div>
-                      <select
-                        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-emerald-200"
-                        value={gender}
-                        onChange={(e) => setGender(e.target.value)}
-                      >
-                        <option value="MALE">MALE</option>
-                        <option value="FEMALE">FEMALE</option>
-                        <option value="OTHER">OTHER</option>
-                      </select>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div>
-                      <div className="mb-1 text-xs font-bold text-slate-700">
-                        Specialization
-                      </div>
-                      <Input
-                        value={specialization}
-                        onChange={(e) => setSpecialization(e.target.value)}
-                        placeholder="Cardiology"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <div className="mb-1 text-xs font-bold text-slate-700">
-                        Hospital
-                      </div>
-                      <Input
-                        value={hospital}
-                        onChange={(e) => setHospital(e.target.value)}
-                        required
-                      />
-                    </div>
-
+                    <AuthInput
+                      label="Specialization"
+                      icon={<Stethoscope size={18} />}
+                      value={specialization}
+                      onChange={(e) => setSpecialization(e.target.value)}
+                      placeholder="Cardiology / Gen Physician"
+                    />
+                    <AuthInput
+                      label="Primary Hospital"
+                      icon={<Hospital size={18} />}
+                      value={hospital}
+                      onChange={(e) => setHospital(e.target.value)}
+                      placeholder="City Medical Center"
+                    />
                     <div className="md:col-span-2">
-                      <div className="mb-1 text-xs font-bold text-slate-700">
-                        SLMC Number
-                      </div>
-                      <Input
+                      <AuthInput
+                        label="SLMC Registration Number"
+                        icon={<GraduationCap size={18} />}
                         value={slmcNumber}
                         onChange={(e) => setSlmcNumber(e.target.value)}
-                        required
+                        placeholder="Verified Medical License ID"
                       />
                     </div>
                   </>
                 )}
+
+                <AuthInput
+                  label="Secure Password"
+                  icon={<Lock size={18} />}
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="MIN 8 chars"
+                />
+
+                <AuthInput
+                  label="Confirm Password"
+                  icon={<Lock size={18} />}
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Repeat password"
+                />
               </div>
 
-              <Button type="submit" disabled={loading}>
-                {loading ? "Registering..." : "Register"}
+              <Button
+                type="submit"
+                disabled={loading}
+                className="h-16 rounded-[24px] bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-emerald-200 transition-all active:scale-[0.98] group"
+              >
+                {loading ? "Creating Identity..." : (
+                  <span className="flex items-center justify-center gap-2">
+                    Register <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                )}
               </Button>
 
-              <div className="text-sm text-slate-600">
-                Already have an account?{" "}
-                <Link to="/login" className="font-semibold text-emerald-700">
-                  Login
-                </Link>
+              <div className="text-center">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Already registered?{" "}
+                  <Link to="/login" className="text-slate-950 font-black hover:underline underline-offset-4 ml-1">
+                    Login instead
+                  </Link>
+                </p>
               </div>
             </form>
           </CardContent>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+function AuthInput({ label, icon, ...props }) {
+  return (
+    <div className="space-y-2">
+      <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">{label}</label>
+      <div className="relative">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300">
+          {icon}
+        </div>
+        <Input
+          {...props}
+          className="h-14 pl-12 rounded-2xl border-2 border-slate-50 bg-slate-50/50 font-bold focus:bg-white focus:border-emerald-100 transition-all text-slate-900 outline-none"
+          required
+        />
       </div>
     </div>
   );
