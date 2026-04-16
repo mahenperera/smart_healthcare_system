@@ -2,6 +2,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { cn } from "../../utils/cn";
 import { useAuth } from "../../context/AuthContext";
+import logoImg from "../../assets/logo.jpeg";
 
 function NavItem({ to, children }) {
   return (
@@ -55,17 +56,11 @@ export default function Navbar() {
       <div className="flex items-center justify-between px-6 py-4 w-full h-20">
         {/* Branding */}
         <Link to="/" className="flex items-center gap-3 shrink-0">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-600 text-white font-black shadow-lg shadow-emerald-100 transform -rotate-3 hover:rotate-0 transition-transform">
-            SHC
-          </div>
-          <div className="leading-tight hidden sm:block">
-            <div className="font-black text-slate-900 tracking-tight text-lg">
-              Smart Healthcare
-            </div>
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Appointments & Care
-            </div>
-          </div>
+          <img
+            src={logoImg}
+            alt="Smart Healthcare"
+            className="h-12 w-auto rounded-xl shadow-xl shadow-emerald-100 ring-1 ring-emerald-100/60 object-contain bg-white"
+          />
         </Link>
 
         {/* Navigation */}

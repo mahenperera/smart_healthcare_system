@@ -25,6 +25,7 @@ import {
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { useAuth } from "../../context/AuthContext";
+import logoImg from "../../assets/logo.jpeg";
 
 export default function RegisterPage() {
   const { isAuthenticated, register, loading } = useAuth();
@@ -99,9 +100,11 @@ export default function RegisterPage() {
       <div className="w-full max-w-2xl">
         {/* Branding */}
         <div className="flex flex-col items-center mb-10">
-          <div className="h-16 w-16 rounded-[24px] bg-emerald-600 flex items-center justify-center text-white shadow-2xl shadow-emerald-200 mb-4 transform hover:-rotate-6 transition-transform">
-            <ShieldCheck size={32} />
-          </div>
+          <img
+            src={logoImg}
+            alt="Smart Healthcare"
+            className="h-12 w-auto rounded-xl shadow-lg shadow-emerald-100/60 ring-1 ring-emerald-100/30 mb-4 transform hover:-rotate-6 transition-transform object-contain bg-white"
+          />
           <h2 className="text-3xl font-black text-slate-950 tracking-tight text-center">Join Our Medical Network</h2>
           <p className="text-slate-500 font-bold text-sm mt-1 uppercase tracking-widest">Create your secure healthcare identity</p>
         </div>

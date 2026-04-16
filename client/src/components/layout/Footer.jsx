@@ -2,7 +2,7 @@ import { Phone, Mail, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="mt-14 bg-emerald-600 text-white">
+    <footer className="bg-emerald-600 text-white">
       <div className="mx-auto max-w-6xl px-4 py-10 grid gap-8 md:grid-cols-3">
         <div className="grid gap-3">
           <div className="text-lg font-extrabold">Smart Healthcare System</div>
