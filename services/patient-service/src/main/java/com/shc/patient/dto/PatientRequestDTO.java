@@ -6,6 +6,7 @@ import com.shc.patient.enums.GenderType;
 
 public class PatientRequestDTO {
 
+    private String userId;
     private String nic;
     private String name;
     private GenderType gender;
@@ -13,6 +14,14 @@ public class PatientRequestDTO {
     private String phone;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getNic() {
         return nic;

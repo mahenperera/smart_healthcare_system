@@ -19,6 +19,7 @@ public class AppointmentResponse {
     private String reason;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private UUID availabilitySlotId;
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -52,4 +53,7 @@ public class AppointmentResponse {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public UUID getAvailabilitySlotId() { return availabilitySlotId; }
+    public void setAvailabilitySlotId(UUID availabilitySlotId) { this.availabilitySlotId = availabilitySlotId; }
 }

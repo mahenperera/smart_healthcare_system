@@ -1,4 +1,6 @@
 package com.shc.appointment.dto;
+ 
+import java.util.UUID;
 
 import com.shc.appointment.enums.AppointmentType;
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +29,8 @@ public class CreateAppointmentRequest {
 
     // ONLINE or PHYSICAL (optional; defaults to PHYSICAL in mapper/entity)
     private AppointmentType appointmentType;
+ 
+    private UUID availabilitySlotId;
 
     public String getPatientId() { return patientId; }
     public void setPatientId(String patientId) { this.patientId = patientId; }
@@ -48,4 +52,7 @@ public class CreateAppointmentRequest {
 
     public AppointmentType getAppointmentType() { return appointmentType; }
     public void setAppointmentType(AppointmentType appointmentType) { this.appointmentType = appointmentType; }
+ 
+    public UUID getAvailabilitySlotId() { return availabilitySlotId; }
+    public void setAvailabilitySlotId(UUID availabilitySlotId) { this.availabilitySlotId = availabilitySlotId; }
 }

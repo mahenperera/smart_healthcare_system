@@ -43,6 +43,9 @@ public class Appointment {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+ 
+    @Column(name = "availability_slot_id")
+    private UUID availabilitySlotId;
 
     @PrePersist
     public void prePersist() {
@@ -96,4 +99,7 @@ public class Appointment {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public UUID getAvailabilitySlotId() { return availabilitySlotId; }
+    public void setAvailabilitySlotId(UUID availabilitySlotId) { this.availabilitySlotId = availabilitySlotId; }
 }

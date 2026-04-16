@@ -43,6 +43,11 @@ public class PatientController {
         return patientService.getPatientByNic(nic);
     }
 
+    @GetMapping("/patients/user/{userId}")
+    public PatientRequestDTO getPatientByUserId(@PathVariable String userId) {
+        return patientService.getPatientByUserId(userId);
+    }
+
     @PutMapping("/patients/{id}")   
     public PatientRequestDTO updatePatient(@PathVariable UUID id, @RequestBody PatientRequestDTO patientRequestDTO) {
         return patientService.updatePatient(id, patientRequestDTO);
