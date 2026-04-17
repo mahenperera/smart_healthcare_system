@@ -1,15 +1,98 @@
 services:
-  postgres:
-    image: postgres:16
-    container_name: shs-postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: healthcare
-      POSTGRES_USER: healthcare_user
-      POSTGRES_PASSWORD: healthcare_pass
-    volumes:
-      - shs_pgdata:/var/lib/postgresql/data
 
-volumes:
-  shs_pgdata:
+  auth-service:
+    build: ../../services/auth-service
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
+      - SERVICE_DOCTOR_URL=http://doctor-service:8083/api/doctors
+      - SERVICE_PATIENT_URL=http://patient-service:8082/api/patients
+    depends_on:
+      - doctor-service
+      - patient-service
+    networks:
+      - micro-net
+
+  patient-service:
+    build: ../../services/patient-service
+    container_name: patient-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
+    networks:
+      - micro-net
+
+  doctor-service:
+    build: ../../services/doctor-service
+    container_name: doctor-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
+      - cloudinary_cloud-name=${CLOUDINARY_CLOUD_NAME}
+      - cloudinary_api-key=${CLOUDINARY_API_KEY}
+      - cloudinary_api-secret=${CLOUDINARY_API_SECRET}
+    networks:
+      - micro-net
+
+  appointment-service:
+    build: ../../services/appointment-service
+    container_name: appointment-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
+    networks:
+      - micro-net
+
+  telemedicine-service:
+    build: ../../services/telemedicine-service
+    container_name: telemedicine-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
+      - agora_appId=${AGORA_APP_ID}
+      - agora_certificate=${AGORA_APP_CERTIFICATE}
+    networks:
+      - micro-net
+
+  payment-service:
+    build: ../../services/payment-service
+    container_name: payment-service
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
+    networks:
+      - micro-net
+
+  notification-service:
+    build: ../../services/notification-service
+    container_name: notification-service
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
+    networks:
+      - micro-net
+
+networks:
+  micro-net:
