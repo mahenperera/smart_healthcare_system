@@ -33,10 +33,10 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${service.doctor.url:http://doctor-service:8083/api/doctors}")
+    @Value("${service.doctor.url:http://localhost:8083/api/doctors}")
     private String doctorServiceUrl;
 
-    @Value("${service.patient.url:http://patient-service:8082/api/patients}")
+    @Value("${service.patient.url:http://localhost:8082/api/patients}")
     private String patientServiceUrl;
 
     @Override
