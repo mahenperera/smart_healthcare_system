@@ -5,6 +5,11 @@ import HomePage from "./pages/home/HomePage";
 import AppointmentsPage from "./pages/appointments/AppointmentsPage";
 import AppointmentsListPage from "./pages/appointments/AppointmentsListPage";
 import NewAppointmentPage from "./pages/appointments/NewAppointmentPage";
+import PatientPage from "./pages/patient/PatientPage";
+import PatientListPage from "./pages/patient/PatientListPage";
+import PatientDetailPage from "./pages/patient/PatientDetailPage";
+import PatientFormPage from "./pages/patient/PatientFormPage";
+import PatientHubPage from "./pages/patient/PatientHubPage";
 
 function NotFound() {
   return (
@@ -26,6 +31,15 @@ export default function App() {
             <Route index element={<AppointmentsListPage />} />
             <Route path="new" element={<NewAppointmentPage />} />
           </Route>
+
+          <Route path="/patients" element={<PatientPage />}>
+            <Route index element={<PatientListPage />} />
+            <Route path="new" element={<PatientFormPage />} />
+            <Route path=":id" element={<PatientDetailPage />} />
+            <Route path=":id/edit" element={<PatientFormPage />} />
+          </Route>
+
+          <Route path="/patient/hub" element={<PatientHubPage />} />
 
           <Route path="*" element={<NotFound />} />
         </Route>

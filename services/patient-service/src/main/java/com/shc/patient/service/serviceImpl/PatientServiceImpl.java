@@ -20,6 +20,7 @@ public  class PatientServiceImpl implements PatientService {
     @Override
     public void createPatient(PatientRequestDTO patientRequestDTO) {
         Patient patient = new Patient();
+        patient.setUserId(patientRequestDTO.getUserId());
         patient.setNic(patientRequestDTO.getNic());
         patient.setName(patientRequestDTO.getName());
         patient.setGender(patientRequestDTO.getGender());
@@ -38,6 +39,7 @@ public  class PatientServiceImpl implements PatientService {
     public PatientRequestDTO getPatientById(UUID id) {
         Patient patient = patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Patient not found"));
         PatientRequestDTO patientRequestDTO = new PatientRequestDTO();
+        patientRequestDTO.setUserId(patient.getUserId());
         patientRequestDTO.setNic(patient.getNic());
         patientRequestDTO.setName(patient.getName());
         patientRequestDTO.setGender(patient.getGender());
@@ -50,6 +52,7 @@ public  class PatientServiceImpl implements PatientService {
     public PatientRequestDTO getPatientByNic(String nic) {
         Patient patient = patientRepository.findByNic(nic).orElseThrow(() -> new RuntimeException("Patient not found"));
         PatientRequestDTO patientRequestDTO = new PatientRequestDTO();
+        patientRequestDTO.setUserId(patient.getUserId());
         patientRequestDTO.setNic(patient.getNic());
         patientRequestDTO.setName(patient.getName());
         patientRequestDTO.setGender(patient.getGender());
@@ -61,6 +64,9 @@ public  class PatientServiceImpl implements PatientService {
     @Override
     public PatientRequestDTO updatePatient(UUID id, PatientRequestDTO patientRequestDTO) {
         Patient patient = patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Patient not found"));
+        if (patientRequestDTO.getUserId() != null) {
+            patient.setUserId(patientRequestDTO.getUserId());
+        }
         patient.setNic(patientRequestDTO.getNic());
         patient.setName(patientRequestDTO.getName());
         patient.setGender(patientRequestDTO.getGender());

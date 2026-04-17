@@ -20,6 +20,10 @@ public class Patient {
     @Id
     @Column(columnDefinition = "UUID")
     private UUID id;
+
+    @Column(name = "user_id", columnDefinition = "UUID")
+    private UUID userId;
+
     private String nic;
     private String name;
 
@@ -50,6 +54,14 @@ public class Patient {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getNic() {

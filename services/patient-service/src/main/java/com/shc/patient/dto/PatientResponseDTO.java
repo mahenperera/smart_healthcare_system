@@ -8,6 +8,7 @@ import com.shc.patient.enums.GenderType;
 public class PatientResponseDTO {
 
     private UUID id;
+    private UUID userId;
     private String nic;
     private String name;
     private GenderType gender;
@@ -22,6 +23,14 @@ public class PatientResponseDTO {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getNic() {
