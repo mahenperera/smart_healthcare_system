@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { User } from "lucide-react";
+import NotificationBell from "../notifications/NotificationBell";
 
 function NavItem({ to, children }) {
   return (
@@ -40,6 +41,8 @@ export default function Navbar() {
           <NavItem to="/appointments">Appointments</NavItem>
           
           <span className="w-px h-5 bg-slate-200 mx-1"></span>
+          
+          <NotificationBell />
           
           <NavLink
             to="/patient/hub"

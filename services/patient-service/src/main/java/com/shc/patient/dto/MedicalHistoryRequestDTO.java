@@ -1,11 +1,14 @@
 package com.shc.patient.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 public class MedicalHistoryRequestDTO {
     private String condition;
     private String diagnosis;
     private String treatment;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime recordDate;
 
     public String getCondition() {

@@ -8,8 +8,11 @@ import com.shc.patient.repository.PatientRepository;
 import com.shc.patient.service.MedicalHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,9 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
 
     @Autowired
     private PatientRepository patientRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Override
     public MedicalHistoryResponseDTO addMedicalHistory(UUID patientId, MedicalHistoryRequestDTO requestDTO) {
@@ -36,6 +42,19 @@ public class MedicalHistoryServiceImpl implements MedicalHistoryService {
         history.setRecordDate(requestDTO.getRecordDate());
 
         MedicalHistory savedHistory = medicalHistoryRepository.save(history);
+
+        // Notify patient about new medical history record
+        try {
+            String notificationUrl = "http://localhost:8085/api/notifications/send";
+            Map<String, String> notificationRequest = new HashMap<>();
+            notificationRequest.put("recipient", "alex.j@example.com"); // Dummy email for MVP
+            notificationRequest.put("subject", "New Medical History Record Added");
+            notificationRequest.put("message", "A new medical record for '" + savedHistory.getCondition() + "' has been added to your profile.");
+            
+            restTemplate.postForEntity(notificationUrl, notificationRequest, String.class);
+        } catch (Exception e) {
+            System.err.println("Failed to send notification: " + e.getMessage());
+        }
 
         return new MedicalHistoryResponseDTO(
                 savedHistory.getId(),

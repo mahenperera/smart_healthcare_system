@@ -1,5 +1,6 @@
 package com.shc.patient.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -8,6 +9,8 @@ public class PrescriptionRequestDTO {
     private String medicationName;
     private String dosage;
     private String instructions;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime prescribedAt;
 
     public UUID getDoctorId() { return doctorId; }
