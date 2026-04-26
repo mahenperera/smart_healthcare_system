@@ -67,6 +67,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
       - agora_appId=${AGORA_APP_ID}
       - agora_certificate=${AGORA_APP_CERTIFICATE}
+      - APPOINTMENT_BASE_URL=http://appointment-service:8084
     networks:
       - micro-net
 

@@ -9,7 +9,7 @@ export default defineConfig({
         target: "http://localhost:8081",
         changeOrigin: true,
       },
-      "/patients": {
+      "/api/patients": {
         target: "http://localhost:8082",
         changeOrigin: true,
       },
@@ -18,7 +18,7 @@ export default defineConfig({
         changeOrigin: true,
       },
       "/api/appointments": {
-        target: "http://localhost:8080",
+        target: "http://localhost:8084",
         changeOrigin: true,
       },
       "/api/telemedicine": {
@@ -26,7 +26,7 @@ export default defineConfig({
         changeOrigin: true,
       },
       "/health": {
-        target: "http://localhost:8080",
+        target: "http://localhost:8084",
         changeOrigin: true,
       },
     },
