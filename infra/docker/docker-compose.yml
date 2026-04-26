@@ -5,7 +5,10 @@ services:
     container_name: auth-service
     ports:
       - "8081:8081"
+    mem_limit: 512m
+    memswap_limit: 512m
     environment:
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
@@ -22,7 +25,10 @@ services:
     container_name: patient-service
     ports:
       - "8082:8082"
+    mem_limit: 512m
+    memswap_limit: 512m
     environment:
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
@@ -34,7 +40,10 @@ services:
     container_name: doctor-service
     ports:
       - "8083:8083"
+    mem_limit: 512m
+    memswap_limit: 512m
     environment:
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
@@ -49,7 +58,10 @@ services:
     container_name: appointment-service
     ports:
       - "8084:8084"
+    mem_limit: 512m
+    memswap_limit: 512m
     environment:
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
@@ -61,7 +73,10 @@ services:
     container_name: telemedicine-service
     ports:
       - "8085:8085"
+    mem_limit: 512m
+    memswap_limit: 512m
     environment:
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
@@ -76,7 +91,10 @@ services:
     container_name: payment-service
     ports:
       - "8086:8086"
+    mem_limit: 512m
+    memswap_limit: 512m
     environment:
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
@@ -88,7 +106,10 @@ services:
     container_name: notification-service
     ports:
       - "8087:8087"
+    mem_limit: 512m
+    memswap_limit: 512m
     environment:
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
       - SPRING_DATASOURCE_URL=${DB_URL}
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASS}

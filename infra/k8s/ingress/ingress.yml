@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: healthcare-ingress
+  namespace: smart-healthcare
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/auth
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-service
+            port:
+              number: 8081
+      - path: /api/patients
+        pathType: Prefix
+        backend:
+          service:
+            name: patient-service
+            port:
+              number: 8082
+      - path: /api/doctors
+        pathType: Prefix
+        backend:
+          service:
+            name: doctor-service
+            port:
+              number: 8083
+      - path: /api/appointments
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-service
+            port:
+              number: 8084
+      - path: /api/telemedicine
+        pathType: Prefix
+        backend:
+          service:
+            name: telemedicine-service
+            port:
+              number: 8085
+      - path: /api/payments
+        pathType: Prefix
+        backend:
+          service:
+            name: payment-service
+            port:
+              number: 8086
+      - path: /api/notifications
+        pathType: Prefix
+        backend:
+          service:
+            name: notification-service
+            port:
+              number: 8087

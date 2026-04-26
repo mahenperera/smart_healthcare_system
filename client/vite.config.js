@@ -6,27 +6,27 @@ export default defineConfig({
   server: {
     proxy: {
       "/api/auth": {
-        target: "http://localhost:8081",
+        target: "http://127.0.0.1",
         changeOrigin: true,
       },
       "/api/patients": {
-        target: "http://localhost:8082",
+        target: "http://127.0.0.1",
         changeOrigin: true,
       },
       "/api/doctors": {
-        target: "http://localhost:8083",
+        target: "http://127.0.0.1",
         changeOrigin: true,
       },
       "/api/appointments": {
-        target: "http://localhost:8084",
+        target: "http://127.0.0.1",
         changeOrigin: true,
       },
       "/api/telemedicine": {
-        target: "http://localhost:8085",
+        target: "http://127.0.0.1",
         changeOrigin: true,
       },
       "/health": {
-        target: "http://localhost:8084",
+        target: "http://127.0.0.1",
         changeOrigin: true,
       },
     },
