@@ -165,6 +165,20 @@ public class AppointmentServiceImpl implements AppointmentService {
         return AppointmentMapper.toResponse(saved);
     }
 
+    @Override
+    public void delete(UUID id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found: " + id));
+
+        if (appointment.getStatus() != AppointmentStatus.CANCELLED &&
+                appointment.getStatus() != AppointmentStatus.COMPLETED &&
+                appointment.getStatus() != AppointmentStatus.REJECTED) {
+            throw new BadRequestException("Only COMPLETED, CANCELLED, or REJECTED appointments can be deleted");
+        }
+
+        appointmentRepository.delete(appointment);
+    }
+
     // ----------------- helpers -----------------
 
     private void validateTimes(LocalDateTime start, LocalDateTime end) {

@@ -397,7 +397,7 @@ export default function NewAppointmentPage() {
  
   if (role !== "PATIENT") {
     return (
-      <Card className="rounded-[28px] border border-slate-200 shadow-sm">
+      <Card className="rounded-2xl border border-slate-200 shadow-sm">
         <CardContent className="py-8 text-sm text-slate-600">
           Only patients can create appointments.
         </CardContent>
@@ -411,8 +411,8 @@ export default function NewAppointmentPage() {
     selectedDoctor?.specialization || selectedDoctor?.specialty || "-";
  
   return (
-    <Card className="rounded-[28px] border border-slate-200 shadow-sm">
-      <CardHeader className="border-b border-slate-200 pb-5">
+    <Card className="rounded-2xl border border-slate-200 shadow-sm">
+      <CardHeader className="border-b border-slate-100 pb-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
             <CardDescription className="text-sm">
@@ -495,28 +495,29 @@ export default function NewAppointmentPage() {
                       d?.specialization || d?.specialty || "-";
  
                     return (
-                      <button
+                        <button
                         key={String(d?.id || d?.userId)}
                         type="button"
                         onClick={() => setSelectedDoctor(d)}
                         className={[
-                          "rounded-3xl border p-5 text-left transition",
+                          "rounded-xl border p-3 md:p-4 text-left transition",
                           selected
                             ? "border-emerald-500 bg-emerald-50"
                             : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50",
                         ].join(" ")}
                       >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="min-w-0">
-                            <div className="text-[1.1rem] font-extrabold text-slate-950">
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-base font-extrabold text-slate-950 leading-tight">
                               {displayName}
                             </div>
-                            <div className="mt-1 text-sm text-slate-600">
+                            <div className="mt-0.5 text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest">
                               {displaySpec}
                             </div>
  
                             {d?.hospital ? (
-                              <div className="mt-3 text-sm text-slate-700">
+                              <div className="mt-1.5 text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                                <span className="inline-block w-1 h-1 rounded-full bg-slate-400" />
                                 {d.hospital}
                               </div>
                             ) : null}
@@ -524,12 +525,14 @@ export default function NewAppointmentPage() {
  
                           <div
                             className={[
-                              "mt-1 h-6 w-6 shrink-0 rounded-full border-2 transition",
+                              "h-5 w-5 shrink-0 rounded-full border-2 transition flex items-center justify-center",
                               selected
                                 ? "border-emerald-600 bg-emerald-600"
                                 : "border-slate-300 bg-white",
                             ].join(" ")}
-                          />
+                          >
+                            {selected && <div className="h-2 w-2 bg-white rounded-full" />}
+                          </div>
                         </div>
                       </button>
                     );
@@ -551,27 +554,30 @@ export default function NewAppointmentPage() {
         ) : null}
  
         {step === 2 ? (
-          <div className="space-y-5">
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
-              <div className="text-sm text-slate-500">Selected doctor</div>
-              <div className="mt-1 text-[1.05rem] font-extrabold text-slate-950">
-                {selectedDoctorName}
+          <div className="space-y-4 md:space-y-5">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 md:p-4 flex items-center justify-between">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Selected doctor</div>
+                <div className="text-base font-extrabold text-slate-950 leading-tight">
+                  {selectedDoctorName}
+                </div>
+                <div className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">{selectedDoctorSpec}</div>
               </div>
-              <div className="text-sm text-slate-600">{selectedDoctorSpec}</div>
+              <Button variant="ghost" size="sm" onClick={() => setStep(1)} className="text-xs font-bold text-emerald-600 hover:text-emerald-700">Change</Button>
             </div>
  
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-3 md:grid-cols-2">
               <Field label="Patient">
                 <Input
                   value={user?.email || user?.userId || ""}
                   disabled
-                  className="h-12 rounded-2xl"
+                  className="h-10 rounded-lg text-sm bg-slate-50 text-slate-500 font-medium"
                 />
               </Field>
  
               <Field label="Appointment type">
                 <select
-                  className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:ring-2 focus:ring-emerald-200"
+                  className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium outline-none transition focus:ring-2 focus:ring-emerald-200"
                   value={appointmentType}
                   onChange={(e) => setAppointmentType(e.target.value)}
                 >
@@ -586,13 +592,13 @@ export default function NewAppointmentPage() {
                   min={minDate}
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="h-12 rounded-2xl"
+                  className="h-10 rounded-lg text-sm font-medium"
                 />
               </Field>
  
               <Field label="Time">
                 <select
-                  className="h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:ring-2 focus:ring-emerald-200"
+                  className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium outline-none transition focus:ring-2 focus:ring-emerald-200"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                   disabled={!date || loadingAppointments || loadingAvailability}
@@ -620,7 +626,7 @@ export default function NewAppointmentPage() {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Brief reason for the visit"
-                className="min-h-[110px] rounded-2xl"
+                className="min-h-[80px] rounded-lg text-sm font-medium"
               />
             </Field>
  
@@ -657,23 +663,49 @@ export default function NewAppointmentPage() {
         ) : null}
  
         {step === 3 ? (
-          <div className="mx-auto max-w-2xl space-y-5">
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-              <div className="mb-4 text-[1.05rem] font-extrabold text-slate-950">
-                Review
+          <div className="mx-auto max-w-lg space-y-6">
+            <div className="rounded-2xl border-2 border-slate-100 bg-white overflow-hidden shadow-lg shadow-slate-200/50">
+              <div className="bg-slate-950 px-5 py-4 md:px-6">
+                <h3 className="text-white font-black text-lg">Appointment Summary</h3>
+                <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Please review details before confirming</p>
               </div>
  
-              <div className="space-y-3">
-                <CompactRow label="Patient" value={user?.email || "-"} />
-                <CompactRow label="Doctor" value={selectedDoctorName} />
-                <CompactRow label="Specialty" value={selectedDoctorSpec} />
-                <CompactRow label="Type" value={appointmentType} />
-                <CompactRow label="Date" value={formatDisplayDate(date)} />
-                <CompactRow
-                  label="Time"
-                  value={selectedWindow ? `${time} - ${selectedWindow.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : "-"}
-                />
-                <CompactRow label="Reason" value={reason.trim() || "-"} />
+              <div className="p-5 md:p-6 space-y-4">
+                <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
+                  <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-black text-xl">
+                    {selectedDoctorName[0] || "D"}
+                  </div>
+                  <div>
+                    <div className="text-base font-black text-slate-900 leading-tight">{selectedDoctorName}</div>
+                    <div className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">{selectedDoctorSpec}</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Date</div>
+                    <div className="text-sm font-bold text-slate-800">{formatDisplayDate(date)}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Time</div>
+                    <div className="text-sm font-bold text-slate-800">{selectedWindow ? `${time} - ${selectedWindow.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : "-"}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Type</div>
+                    <div className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 inline-block px-2 py-0.5 rounded-md uppercase tracking-wide">{appointmentType}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Patient</div>
+                    <div className="text-sm font-bold text-slate-800 truncate" title={user?.email}>{user?.email || "-"}</div>
+                  </div>
+                </div>
+
+                {reason.trim() && (
+                  <div className="pt-4 border-t border-slate-100">
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Reason for visit</div>
+                    <div className="text-sm font-medium text-slate-700 italic">"{reason.trim()}"</div>
+                  </div>
+                )}
               </div>
             </div>
  
@@ -682,7 +714,7 @@ export default function NewAppointmentPage() {
                 variant="outline"
                 onClick={back}
                 disabled={saving}
-                className="rounded-2xl px-6"
+                className="rounded-xl px-6 h-11 text-xs font-bold uppercase tracking-widest"
               >
                 Back
               </Button>
@@ -690,9 +722,9 @@ export default function NewAppointmentPage() {
               <Button
                 onClick={confirm}
                 disabled={saving}
-                className="rounded-2xl px-6"
+                className="rounded-xl px-6 h-11 text-xs font-black uppercase tracking-widest bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-200"
               >
-                {saving ? "Creating..." : "Confirm appointment"}
+                {saving ? "Creating..." : "Confirm Appointment"}
               </Button>
             </div>
           </div>

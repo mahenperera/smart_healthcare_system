@@ -64,6 +64,12 @@ public class AppointmentController {
         return appointmentService.updateStatus(parseUUID(id), request.getStatus());
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        appointmentService.delete(parseUUID(id));
+        return ResponseEntity.noContent().build();
+    }
+
     private UUID parseUUID(String id) {
         try {
             return UUID.fromString(id);

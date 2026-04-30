@@ -276,8 +276,8 @@ export default function HomePage() {
             <div
               className={role === "DOCTOR" ? "lg:col-span-12" : "lg:col-span-7"}
             >
-              <div className="rounded-3xl border border-white/40 bg-white/70 backdrop-blur-md p-8 shadow-xl">
-                <div className="text-4xl font-extrabold leading-tight">
+              <div className="rounded-[2rem] border border-white/40 bg-white/40 backdrop-blur-xl p-6 md:p-8 shadow-2xl">
+                <div className="text-3xl md:text-4xl lg:text-[2.5rem] font-extrabold leading-tight">
                   {role === "DOCTOR" ? (
                     <>
                       Manage your clinic{" "}
@@ -293,13 +293,13 @@ export default function HomePage() {
                   )}
                 </div>
 
-                <div className="mt-3 text-slate-700">
+                <div className="mt-3 text-base text-slate-700 max-w-lg">
                   {role === "DOCTOR"
                     ? "View your schedule, manage virtual or physical consultations, and handle patient records effortlessly."
                     : "Search a doctor, pick date & time, confirm. Online or physical."}
                 </div>
 
-                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                <div className="mt-8 grid gap-3 sm:grid-cols-3">
                   <Feature
                     icon={<Video size={18} />}
                     title="Online consult"
@@ -321,7 +321,7 @@ export default function HomePage() {
 
             {role !== "DOCTOR" && (
               <div className="lg:col-span-5">
-                <Card className="rounded-3xl border-white/40 bg-white/70 backdrop-blur-md shadow-xl">
+                <Card className="rounded-[2rem] border border-white/40 bg-white/40 backdrop-blur-xl shadow-2xl h-full flex flex-col">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Search size={18} />
@@ -376,7 +376,7 @@ export default function HomePage() {
                         />
                       </div>
 
-                      <Button variant="default" className="w-full">
+                      <Button className="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-md shadow-emerald-200 transition-all mt-2">
                         Search &amp; book appointment
                       </Button>
 
@@ -391,8 +391,8 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="mt-8">
-            <div className="mb-3 text-sm font-extrabold text-slate-800">
+          <div className="mt-10 lg:mt-12">
+            <div className="mb-4 text-sm font-black uppercase tracking-widest text-slate-500">
               Quick access
             </div>
 
@@ -462,12 +462,12 @@ export default function HomePage() {
 
 function Feature({ icon, title, desc }) {
   return (
-    <div className="rounded-2xl border border-white/30 bg-white/50 backdrop-blur-sm p-4">
-      <div className="flex items-center gap-2 font-bold">
-        <span className="text-emerald-700">{icon}</span>
+    <div className="rounded-2xl border border-white/30 bg-white/50 backdrop-blur-md p-4 transition-all hover:bg-white/60">
+      <div className="flex items-center gap-2 font-extrabold text-slate-900 text-sm">
+        <span className="text-emerald-600 shrink-0 bg-emerald-50 p-1.5 rounded-lg">{icon}</span>
         {title}
       </div>
-      <div className="mt-1 text-sm text-slate-600">{desc}</div>
+      <div className="mt-1.5 text-xs text-slate-600 font-medium leading-relaxed">{desc}</div>
     </div>
   );
 }
@@ -477,13 +477,13 @@ function QuickTile({ title, desc, icon, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="text-left rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md p-5 shadow-lg transition hover:shadow-xl hover:bg-white/80"
+      className="text-left group flex flex-col rounded-[22px] border border-white/40 bg-white/40 backdrop-blur-xl p-5 shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-white/60 hover:-translate-y-1"
     >
-      <div className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-50 text-emerald-700">
+      <div className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100 transition-colors">
         {icon}
       </div>
-      <div className="mt-3 font-extrabold">{title}</div>
-      <div className="text-sm text-slate-600">{desc}</div>
+      <div className="mt-3 text-base font-extrabold text-slate-900">{title}</div>
+      <div className="mt-1 text-sm text-slate-500 font-medium">{desc}</div>
     </button>
   );
 }

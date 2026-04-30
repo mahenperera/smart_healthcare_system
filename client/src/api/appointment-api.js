@@ -26,4 +26,5 @@ export const appointmentApi = {
   cancel: (id) => http.patch(`/api/appointments/${id}/cancel`),
   updateStatus: (id, status) =>
     http.patch(`/api/appointments/${id}/status`, { status }),
+  delete: (id) => http.delete(`/api/appointments/${id}`),
 };

@@ -107,84 +107,80 @@ export default function DoctorAvailabilityPage() {
  
   return (
     <div className="mx-auto max-w-[1240px] px-4 py-10">
-      <div className="mb-10 px-2 lg:px-4">
-        <h1 className="text-[2.25rem] font-black tracking-tight text-slate-950">My Availability</h1>
-        <p className="mt-1 text-slate-600 font-medium text-lg">Set your consultation schedule for patients.</p>
+      <div className="mb-8 px-2 lg:px-4">
+        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">My Availability</h1>
+        <p className="mt-1 text-slate-500 font-medium">Set your consultation schedule for patients.</p>
       </div>
  
       <div className="grid gap-10 lg:grid-cols-12">
         {/* Add Slot Form */}
         <div className="lg:col-span-4">
-          <Card className="rounded-[32px] border-slate-200 shadow-xl shadow-slate-200/50 sticky top-8 overflow-hidden">
-            <CardHeader className="bg-slate-50 border-b border-slate-100 pb-6">
-              <CardTitle className="text-[1.35rem] font-black">Add New Slot</CardTitle>
-              <CardDescription className="text-sm font-bold text-slate-500">Define your consultation hours.</CardDescription>
+          <Card className="rounded-[2rem] border border-slate-200 shadow-xl bg-white sticky top-8 overflow-hidden">
+            <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-6">
+              <CardTitle className="text-xl font-extrabold text-slate-900">Add New Slot</CardTitle>
+              <CardDescription className="text-sm font-semibold text-slate-500">Define your consultation hours.</CardDescription>
             </CardHeader>
-            <CardContent className="pt-8">
-              <form onSubmit={handleAddSlot} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase tracking-[0.05em] text-slate-500 ml-1">
+            <CardContent className="p-6">
+              <form onSubmit={handleAddSlot} className="space-y-5">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 ml-1">
                     Select Date
                   </label>
                   <div className="relative">
-                    <CalendarIcon className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                    <CalendarIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
                       type="date"
                       value={newDate}
                       onChange={(e) => setNewDate(e.target.value)}
-                      className="pl-12 h-12 rounded-2xl border-slate-200 focus:ring-emerald-200 transition-all font-bold"
+                      className="pl-10 h-11 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-100 transition-all text-sm font-semibold"
                       min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
                 </div>
  
-                <div className="grid grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black uppercase tracking-[0.05em] text-slate-400 ml-1">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 ml-1">
                       From
                     </label>
                     <div className="relative">
-                      <Clock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                      <Clock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                       <Input
                         type="time"
                         value={newStartTime}
                         onChange={(e) => setNewStartTime(e.target.value)}
-                        className="pl-12 h-12 rounded-2xl border-slate-200 focus:ring-emerald-200 transition-all font-bold"
+                        className="pl-10 h-11 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-100 transition-all text-sm font-semibold"
                       />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black uppercase tracking-[0.05em] text-slate-400 ml-1">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 ml-1">
                       Until
                     </label>
                     <div className="relative">
-                      <Clock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                      <Clock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                       <Input
                         type="time"
                         value={newEndTime}
                         onChange={(e) => setNewEndTime(e.target.value)}
-                        className="pl-12 h-12 rounded-2xl border-slate-200 focus:ring-emerald-200 transition-all font-bold"
+                        className="pl-10 h-11 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-100 transition-all text-sm font-semibold"
                       />
                     </div>
                   </div>
                 </div>
  
                 {error && (
-                  <div className="rounded-2xl bg-red-50 p-4 border border-red-100">
-                    <p className="text-xs font-black text-red-600 leading-relaxed">{error}</p>
+                  <div className="rounded-xl bg-red-50 p-4 border border-red-100">
+                    <p className="text-sm font-semibold text-red-600 leading-relaxed">{error}</p>
                   </div>
                 )}
  
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="w-full h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm uppercase tracking-widest transition-all transform active:scale-[0.98] shadow-lg shadow-emerald-200"
+                  className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition-all active:scale-[0.98] mt-2"
                 >
-                  {saving ? "Adding..." : (
-                    <span className="flex items-center gap-3">
-                      <Plus size={20} className="stroke-[3]" /> Create Slot
-                    </span>
-                  )}
+                  {saving ? "Adding..." : "Create Slot"}
                 </Button>
               </form>
             </CardContent>
@@ -193,23 +189,23 @@ export default function DoctorAvailabilityPage() {
  
         {/* Grouped Slots List */}
         <div className="lg:col-span-8">
-          <Card className="rounded-[32px] border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden bg-white">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 pb-6 pt-7 px-8">
+          <Card className="rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden bg-white">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 p-6 md:px-8">
               <div>
-                <CardTitle className="text-[1.35rem] font-black">Upcoming Schedule</CardTitle>
-                <CardDescription className="text-sm font-bold text-slate-500">Your planned consultation times.</CardDescription>
+                <CardTitle className="text-xl font-extrabold text-slate-900">Upcoming Schedule</CardTitle>
+                <CardDescription className="text-sm font-semibold text-slate-500">Your planned consultation times.</CardDescription>
               </div>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 onClick={fetchSlots} 
-                className="rounded-2xl h-11 px-5 text-xs font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 gap-2 border border-emerald-100"
+                className="rounded-xl h-10 px-4 text-sm font-bold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 gap-2 border-emerald-100 bg-white shadow-sm"
               >
                 <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
                 Refresh
               </Button>
             </CardHeader>
  
-            <CardContent className="p-8">
+            <CardContent className="p-6 md:p-8">
               {loading && slots.length === 0 ? (
                 <div className="py-24 text-center">
                   <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
@@ -227,9 +223,9 @@ export default function DoctorAvailabilityPage() {
                 <div className="space-y-12">
                   {groupedSlots.map((group) => (
                     <section key={group.date} className="relative">
-                      <div className="flex items-center gap-4 mb-6">
-                        <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-                        <h3 className="text-[12px] font-black uppercase tracking-[0.2em] text-slate-400">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                        <h3 className="text-xs font-bold text-slate-500">
                           {new Date(group.date).toLocaleDateString(undefined, {
                             weekday: 'long',
                             month: 'long',
@@ -240,7 +236,7 @@ export default function DoctorAvailabilityPage() {
                         <div className="flex-1 h-[1px] bg-slate-100"></div>
                       </div>
  
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {group.slots.map((slot) => {
                           const start = new Date(slot.startTime);
                           const end = new Date(slot.endTime);
@@ -251,34 +247,34 @@ export default function DoctorAvailabilityPage() {
                             <div
                               key={slot.id}
                               className={[
-                                "group flex items-center justify-between rounded-[28px] border-2 px-7 py-5 transition-all duration-300",
-                                isPassed ? "bg-slate-50 border-slate-100 opacity-60" : "bg-white border-slate-100 hover:border-emerald-500 hover:shadow-xl hover:shadow-emerald-500/10",
-                                isBooked ? "bg-emerald-50/40 border-emerald-200 shadow-sm" : ""
+                                "group flex items-center justify-between rounded-xl border px-5 py-4 transition-all duration-300",
+                                isPassed ? "bg-slate-50 border-slate-200 opacity-60" : "bg-white border-slate-200 hover:border-emerald-300 hover:shadow-md",
+                                isBooked ? "bg-emerald-50/50 border-emerald-200" : ""
                               ].join(" ")}
                             >
-                              <div className="flex items-center gap-7">
+                              <div className="flex items-center gap-4">
                                 <div className={[
-                                  "h-14 w-14 rounded-[20px] flex items-center justify-center shrink-0 transition-all",
-                                  isBooked ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200" : "bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-600"
+                                  "h-10 w-10 rounded-lg flex items-center justify-center shrink-0 transition-all",
+                                  isBooked ? "bg-emerald-600 text-white shadow-md shadow-emerald-200" : "bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-600"
                                 ].join(" ")}>
-                                  <Clock size={24} className="stroke-[3]" />
+                                  <Clock size={20} />
                                 </div>
                                 
                                 <div>
-                                  <div className="text-[1.25rem] font-black text-slate-950 flex items-center gap-4">
+                                  <div className="text-lg font-bold text-slate-900 flex items-center gap-2">
                                     {start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    <ChevronRight size={18} className="text-slate-300 stroke-[4]" />
+                                    <ChevronRight size={16} className="text-slate-300" />
                                     {end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                   </div>
-                                  <div className="mt-1.5 flex items-center gap-3">
+                                  <div className="mt-1 flex items-center gap-2">
                                     <span className={[
-                                      "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider",
+                                      "px-2.5 py-0.5 rounded-full text-[11px] font-bold",
                                       slot.status === "AVAILABLE" ? "bg-emerald-100 text-emerald-700" : 
-                                      slot.status === "BOOKED" ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-700"
+                                      slot.status === "BOOKED" ? "bg-indigo-100 text-indigo-700" : "bg-slate-200 text-slate-700"
                                     ].join(" ")}>
                                       {slot.status}
                                     </span>
-                                    {isPassed && <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Archived</span>}
+                                    {isPassed && <span className="text-[11px] font-bold text-slate-400 italic">Archived</span>}
                                   </div>
                                 </div>
                               </div>
@@ -286,10 +282,10 @@ export default function DoctorAvailabilityPage() {
                               {!isBooked && (
                                 <button
                                   onClick={() => handleDeleteSlot(slot.id)}
-                                  className="h-11 w-11 flex items-center justify-center rounded-2xl bg-white border border-slate-100 text-slate-300 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all duration-200 shadow-sm"
+                                  className="h-9 w-9 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-slate-400 opacity-0 group-hover:opacity-100 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all duration-200"
                                   title="Delete Slot"
                                 >
-                                  <Trash2 size={20} className="stroke-[2.5]" />
+                                  <Trash2 size={16} />
                                 </button>
                               )}
                             </div>

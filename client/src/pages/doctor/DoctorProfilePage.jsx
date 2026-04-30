@@ -159,8 +159,8 @@ export default function DoctorProfilePage() {
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="mb-10 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-950">My Profile</h1>
-          <p className="mt-1 text-slate-600 font-medium">Manage your professional information and public appearance.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">My Profile</h1>
+          <p className="mt-1 text-slate-500 font-medium">Manage your professional information and public appearance.</p>
         </div>
         <div className="relative group">
           <div 
@@ -207,23 +207,23 @@ export default function DoctorProfilePage() {
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="grid gap-8 md:grid-cols-2">
           {/* Basic Info */}
-          <Card className="rounded-[32px] border-slate-200 shadow-xl shadow-slate-200/40">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
+          <Card className="rounded-[2rem] border border-slate-200 shadow-xl bg-white">
+            <CardHeader className="p-6 md:p-8 md:pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl font-extrabold text-slate-900">
                 <User size={20} className="text-emerald-500" /> Basic Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Name</label>
-                <Input name="fullName" value={formData.fullName} onChange={handleChange} className="rounded-xl border-slate-200" required />
+            <CardContent className="space-y-5 p-6 md:p-8 md:pt-2">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 ml-1">Full Name</label>
+                <Input name="fullName" value={formData.fullName} onChange={handleChange} className="h-11 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-100 transition-all font-semibold text-sm" required />
               </div>
-              <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">SLMC Number</label>
-                <Input name="slmcNumber" value={formData.slmcNumber} onChange={handleChange} className="rounded-xl border-slate-200" required />
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 ml-1">SLMC Number</label>
+                <Input name="slmcNumber" value={formData.slmcNumber} onChange={handleChange} className="h-11 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-100 transition-all font-semibold text-sm" required />
               </div>
-              <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Profile Photo Status</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 ml-1">Profile Photo Status</label>
                 <div 
                   className={`p-4 rounded-xl border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center gap-3 ${
                     isDragging ? 'bg-emerald-50 border-emerald-400' : 'bg-slate-50 border-slate-200 hover:border-emerald-300 hover:bg-slate-100/50'
@@ -250,37 +250,37 @@ export default function DoctorProfilePage() {
           </Card>
  
           {/* Professional Details */}
-          <Card className="rounded-[32px] border-slate-200 shadow-xl shadow-slate-200/40">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
+          <Card className="rounded-[2rem] border border-slate-200 shadow-xl bg-white">
+            <CardHeader className="p-6 md:p-8 md:pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl font-extrabold text-slate-900">
                 <Award size={20} className="text-emerald-500" /> Expertise
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Specialization</label>
-                <Input name="specialization" value={formData.specialization} onChange={handleChange} className="rounded-xl border-slate-200" required />
+            <CardContent className="space-y-5 p-6 md:p-8 md:pt-2">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 ml-1">Specialization</label>
+                <Input name="specialization" value={formData.specialization} onChange={handleChange} className="h-11 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-100 transition-all font-semibold text-sm" required />
               </div>
-              <div className="space-y-2">
-                <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Hospital / Clinic</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 ml-1">Hospital / Clinic</label>
                 <div className="relative">
-                  <Building2 className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
-                  <Input name="hospital" value={formData.hospital} onChange={handleChange} className="pl-10 rounded-xl border-slate-200" />
+                  <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Input name="hospital" value={formData.hospital} onChange={handleChange} className="h-11 pl-10 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-100 transition-all font-semibold text-sm" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Experience (Years)</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 ml-1">Experience (Years)</label>
                   <div className="relative">
-                    <Briefcase className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
-                    <Input type="number" name="experienceYears" value={formData.experienceYears} onChange={handleChange} className="pl-10 rounded-xl border-slate-200" />
+                    <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input type="number" name="experienceYears" value={formData.experienceYears} onChange={handleChange} className="h-11 pl-10 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-100 transition-all font-semibold text-sm" />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Consultation Fee</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 ml-1">Consultation Fee</label>
                   <div className="relative">
-                    <DollarSign className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
-                    <Input type="number" name="consultationFee" value={formData.consultationFee} onChange={handleChange} className="pl-10 rounded-xl border-slate-200" />
+                    <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input type="number" name="consultationFee" value={formData.consultationFee} onChange={handleChange} className="h-11 pl-10 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-100 transition-all font-semibold text-sm" />
                   </div>
                 </div>
               </div>
@@ -289,32 +289,32 @@ export default function DoctorProfilePage() {
         </div>
  
         {/* Bio and Qualifications */}
-        <Card className="rounded-[32px] border-slate-200 shadow-xl shadow-slate-200/40">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
+        <Card className="rounded-[2rem] border border-slate-200 shadow-xl bg-white">
+          <CardHeader className="p-6 md:p-8 md:pb-4">
+            <CardTitle className="flex items-center gap-2 text-xl font-extrabold text-slate-900">
               <GraduationCap size={20} className="text-emerald-500" /> Biography & Background
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Qualifications</label>
-              <Input name="qualifications" value={formData.qualifications} onChange={handleChange} className="rounded-xl border-slate-200" placeholder="MBBS, MD, FRCS..." />
+          <CardContent className="space-y-5 p-6 md:p-8 md:pt-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 ml-1">Qualifications</label>
+              <Input name="qualifications" value={formData.qualifications} onChange={handleChange} className="h-11 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-100 transition-all font-semibold text-sm" placeholder="MBBS, MD, FRCS..." />
             </div>
-            <div className="space-y-2">
-              <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Biography</label>
-              <Textarea name="bio" value={formData.bio} onChange={handleChange} className="min-h-[150px] rounded-2xl border-slate-200 resize-none" placeholder="Tell your patients more about yourself..." />
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 ml-1">Biography</label>
+              <Textarea name="bio" value={formData.bio} onChange={handleChange} className="min-h-[120px] rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-100 transition-all font-semibold text-sm resize-none p-4" placeholder="Tell your patients more about yourself..." />
             </div>
           </CardContent>
         </Card>
  
-        <div className="flex flex-col items-center gap-4">
-          {error && <div className="w-full rounded-2xl bg-red-50 p-4 border border-red-100 text-red-600 text-sm font-bold">{error}</div>}
-          {success && <div className="w-full rounded-2xl bg-emerald-50 p-4 border border-emerald-100 text-emerald-700 text-sm font-bold">{success}</div>}
+        <div className="flex flex-col items-center gap-4 pt-4">
+          {error && <div className="w-full rounded-xl bg-red-50 p-4 border border-red-100 text-red-600 text-sm font-bold">{error}</div>}
+          {success && <div className="w-full rounded-xl bg-emerald-50 p-4 border border-emerald-100 text-emerald-700 text-sm font-bold">{success}</div>}
           
           <Button 
             type="submit" 
             disabled={saving} 
-            className="w-full max-w-sm h-14 rounded-2xl bg-slate-900 hover:bg-slate-950 text-white font-black text-sm uppercase tracking-widest shadow-lg transition-transform active:scale-[0.98]"
+            className="w-full max-w-sm h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all active:scale-[0.98]"
           >
             {saving ? "Saving Changes..." : <span className="flex items-center gap-2"><Save size={18} /> Update Profile</span>}
           </Button>
