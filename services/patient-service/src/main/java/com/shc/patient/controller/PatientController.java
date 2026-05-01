@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
 
 import com.shc.patient.service.PatientService;
 import com.shc.patient.dto.PatientRequestDTO;
@@ -18,12 +23,14 @@ import com.shc.patient.model.Patient;
 
 
 @RestController
+@RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class PatientController {
 
     @Autowired
     private PatientService patientService;
 
-    @PostMapping ("/patients")   
+    @PostMapping("/patients")
     public void createPatient(@RequestBody PatientRequestDTO patientRequestDTO) {
         patientService.createPatient(patientRequestDTO);
     }
@@ -44,7 +51,7 @@ public class PatientController {
     }
 
     @GetMapping("/patients/user/{userId}")
-    public PatientRequestDTO getPatientByUserId(@PathVariable String userId) {
+    public Patient getPatientByUserId(@PathVariable String userId) {
         return patientService.getPatientByUserId(userId);
     }
 
@@ -56,6 +63,12 @@ public class PatientController {
     @DeleteMapping("/patients/{id}")
     public void deletePatient(@PathVariable UUID id) {
         patientService.deletePatient(id);
+    }
+
+    @PostMapping("/patients/{id}/upload-image")
+    public ResponseEntity<?> uploadImage(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
+        String imageUrl = patientService.updateProfileImage(id, file);
+        return ResponseEntity.ok().body(java.util.Map.of("profileImageUrl", imageUrl));
     }
 
 }

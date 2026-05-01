@@ -41,6 +41,9 @@ public class Appointment {
     @Column(length = 500)
     private String reason;
 
+    @Column(nullable = true)
+    private Boolean reminderSent = false;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
  
@@ -102,4 +105,7 @@ public class Appointment {
 
     public UUID getAvailabilitySlotId() { return availabilitySlotId; }
     public void setAvailabilitySlotId(UUID availabilitySlotId) { this.availabilitySlotId = availabilitySlotId; }
+
+    public Boolean isReminderSent() { return reminderSent; }
+    public void setReminderSent(Boolean reminderSent) { this.reminderSent = reminderSent; }
 }

@@ -364,35 +364,37 @@ export default function TelemedicinePage() {
 
   return (
     <div className="min-h-[calc(100vh-80px)] bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-6">
-        <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+      <div className="mx-auto max-w-7xl px-4 py-6 md:px-6">
+        <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">
               Telemedicine Call
             </h1>
-            <p className="mt-2 text-sm text-slate-600">
-              Appointment: <span className="font-mono">{appointmentId}</span>
+            <div className="mt-1 flex flex-wrap items-center gap-x-2 text-[13px] text-slate-500 font-medium">
+              <span className="flex items-center gap-1">
+                 Appt: <span className="font-mono text-slate-900 truncate max-w-[100px] md:max-w-[200px]" title={appointmentId}>{appointmentId}</span>
+              </span>
               {session?.channelName ? (
                 <>
-                  {" "}
-                  · Channel:{" "}
-                  <span className="font-mono">{session.channelName}</span>
+                  <span className="text-slate-300">•</span>
+                  <span className="flex items-center gap-1">
+                    Channel: <span className="font-mono text-slate-900 truncate max-w-[100px] md:max-w-[200px]" title={session.channelName}>{session.channelName}</span>
+                  </span>
                 </>
               ) : null}
-            </p>
-            <p className="mt-1 text-xs text-slate-500">
-              Signed in as {user?.email || user?.name || "User"} ·{" "}
-              {role || "UNKNOWN"}
+            </div>
+            <p className="mt-0.5 text-[11px] text-slate-400">
+              Signed in as <span className="text-slate-500 font-bold">{user?.email || user?.name || "User"}</span> · {role || "UNKNOWN"}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 pt-1 md:pt-0">
             <StatusPill
-              label={joined ? "Joined" : "Connecting"}
+              label={joined ? "Connected" : "Connecting..."}
               tone={joined ? "green" : "slate"}
             />
             <StatusPill
-              label={remoteConnected ? "Participant connected" : "Waiting"}
+              label={remoteConnected ? "Participant Live" : "Waiting..."}
               tone={remoteConnected ? "green" : "slate"}
             />
             <StatusPill label={role || "UNKNOWN"} tone="blue" />
@@ -400,27 +402,27 @@ export default function TelemedicinePage() {
         </div>
 
         {error ? (
-          <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-[13px] font-bold text-red-700 shadow-sm animate-in fade-in slide-in-from-top-2">
             {error}
           </div>
         ) : null}
 
         {!error && info ? (
-          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-[13px] font-bold text-amber-800 shadow-sm animate-in fade-in slide-in-from-top-2">
             {info}
           </div>
         ) : null}
 
-        <div className="mb-6 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="mb-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+          <div className="flex flex-wrap items-center gap-2">
             <CallButton
               onClick={handleToggleMic}
               disabled={!joined}
               active={micOn}
               activeLabel="Mute"
               inactiveLabel="Unmute"
-              activeIcon={<Mic className="h-5 w-5" />}
-              inactiveIcon={<MicOff className="h-5 w-5" />}
+              activeIcon={<Mic className="h-4.5 w-4.5" />}
+              inactiveIcon={<MicOff className="h-4.5 w-4.5" />}
               activeTone="green"
             />
 
@@ -428,33 +430,35 @@ export default function TelemedicinePage() {
               onClick={handleToggleCamera}
               disabled={!joined}
               active={cameraOn}
-              activeLabel="Camera Off"
-              inactiveLabel="Camera On"
-              activeIcon={<Video className="h-5 w-5" />}
-              inactiveIcon={<VideoOff className="h-5 w-5" />}
+              activeLabel="Stop Camera"
+              inactiveLabel="Start Camera"
+              activeIcon={<Video className="h-4.5 w-4.5" />}
+              inactiveIcon={<VideoOff className="h-4.5 w-4.5" />}
               activeTone="blue"
             />
 
-            <CallButton
-              onClick={handleLeaveCall}
-              active={false}
-              disabled={false}
-              activeLabel="Leave"
-              inactiveLabel="Leave Call"
-              activeIcon={<PhoneOff className="h-5 w-5" />}
-              inactiveIcon={<PhoneOff className="h-5 w-5" />}
-              activeTone="red"
-              forceTone="red"
-            />
+            <div className="ml-auto">
+              <CallButton
+                onClick={handleLeaveCall}
+                active={false}
+                disabled={false}
+                activeLabel="Leave"
+                inactiveLabel="Leave Session"
+                activeIcon={<PhoneOff className="h-4.5 w-4.5" />}
+                inactiveIcon={<PhoneOff className="h-4.5 w-4.5" />}
+                activeTone="red"
+                forceTone="red"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
           <VideoPanel
             title="You"
-            status={cameraOn ? "Camera on" : "Camera off"}
+            status={cameraOn ? "Live" : "Off"}
             statusTone={cameraOn ? "green" : "slate"}
-            fallbackIcon={<User className="h-12 w-12" />}
+            fallbackIcon={<User className="h-10 w-10" />}
             fallbackText={cameraOn ? "" : "Your camera is off"}
             videoRef={localVideoRef}
             showFallback={!cameraOn}
@@ -462,27 +466,33 @@ export default function TelemedicinePage() {
 
           <VideoPanel
             title="Remote Participant"
-            status={remoteConnected ? "Connected" : "Waiting"}
+            status={remoteConnected ? "Live" : "Standby"}
             statusTone={remoteConnected ? "green" : "slate"}
-            fallbackIcon={<MonitorSmartphone className="h-12 w-12" />}
-            fallbackText="Waiting for other participant..."
+            fallbackIcon={<MonitorSmartphone className="h-10 w-10" />}
+            fallbackText="Awaiting other participant..."
             videoRef={remoteVideoRef}
             showFallback={!remoteConnected}
           />
         </div>
 
-        <div className="mt-5 flex flex-col gap-2 text-xs text-slate-500">
-          {loading ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Starting call...
-            </div>
-          ) : null}
+        <div className="mt-4 flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+          <div className="flex items-center gap-3">
+             {loading ? (
+               <div className="flex items-center gap-1.5">
+                 <Loader2 className="h-3 w-3 animate-spin" />
+                 Starting Handshake
+               </div>
+             ) : (
+               <div className="flex items-center gap-1.5 text-emerald-600">
+                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                 Session Secure
+               </div>
+             )}
+          </div>
 
           {joinInfo ? (
-            <div>
-              Token TTL: {joinInfo.expiresInSeconds ?? "-"}s · account:{" "}
-              {String(joinInfo.uidOrAccount ?? "-")}
+            <div className="font-mono text-slate-300">
+              UID: {String(joinInfo.uidOrAccount ?? "-").slice(0, 8)}...
             </div>
           ) : null}
         </div>
@@ -501,19 +511,19 @@ function VideoPanel({
   showFallback,
 }) {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm md:rounded-3xl md:p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="text-[13px] font-bold text-slate-900 uppercase tracking-tight">{title}</div>
         <StatusPill label={status} tone={statusTone} />
       </div>
 
-      <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900">
-        <div ref={videoRef} className="h-full w-full" />
+      <div className="relative aspect-video overflow-hidden rounded-xl bg-slate-900 md:rounded-2xl">
+        <div ref={videoRef} className="h-full w-full object-cover" />
 
         {showFallback ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-900 text-slate-300">
-            <div className="rounded-full bg-slate-800 p-4">{fallbackIcon}</div>
-            <div className="text-sm">{fallbackText}</div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-100/10 backdrop-blur-[2px] text-slate-300">
+            <div className="rounded-full bg-slate-800 p-4 shadow-xl border border-slate-700/50">{fallbackIcon}</div>
+            <div className="text-[11px] font-bold uppercase tracking-widest bg-slate-900/40 px-3 py-1 rounded-full">{fallbackText}</div>
           </div>
         ) : null}
       </div>
@@ -523,15 +533,15 @@ function VideoPanel({
 
 function StatusPill({ label, tone = "slate" }) {
   const tones = {
-    green: "bg-emerald-100 text-emerald-700",
-    blue: "bg-blue-100 text-blue-700",
-    red: "bg-red-100 text-red-700",
-    slate: "bg-slate-100 text-slate-700",
+    green: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    blue: "bg-blue-50 text-blue-600 border-blue-100",
+    red: "bg-red-50 text-red-600 border-red-100",
+    slate: "bg-slate-50 text-slate-500 border-slate-200",
   };
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${tones[tone]}`}
+      className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${tones[tone]}`}
     >
       {label}
     </span>
@@ -551,16 +561,16 @@ function CallButton({
 }) {
   const toneStyles = {
     green: {
-      on: "bg-emerald-600 text-white hover:bg-emerald-700",
-      off: "bg-white text-slate-800 border border-slate-200 hover:bg-slate-50",
+      on: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-200/50",
+      off: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50",
     },
     blue: {
-      on: "bg-blue-600 text-white hover:bg-blue-700",
-      off: "bg-white text-slate-800 border border-slate-200 hover:bg-slate-50",
+      on: "bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-200/50",
+      off: "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50",
     },
     red: {
-      on: "bg-red-600 text-white hover:bg-red-700",
-      off: "bg-red-600 text-white hover:bg-red-700",
+      on: "bg-rose-600 text-white hover:bg-rose-700 shadow-md shadow-rose-200/50",
+      off: "bg-rose-600 text-white hover:bg-rose-700 shadow-md shadow-rose-200/50",
     },
   };
 
@@ -576,7 +586,7 @@ function CallButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${style}`}
+      className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-[11px] md:text-[13px] font-bold uppercase tracking-wide transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${style}`}
     >
       {active ? activeIcon : inactiveIcon}
       {active ? activeLabel : inactiveLabel}

@@ -210,6 +210,21 @@ export default function AppointmentsListPage() {
     }
   }
 
+  async function handleDelete(id) {
+    if (!window.confirm("Are you sure you want to permanently delete this appointment?")) return;
+    
+    try {
+      setActionLoadingId(id);
+      setError("");
+      await appointmentApi.delete(id);
+      await loadData(true);
+    } catch (e) {
+      setError(e?.message || "Failed to delete appointment.");
+    } finally {
+      setActionLoadingId("");
+    }
+  }
+
   function openTelemedicine(item) {
     const appointmentId = getAppointmentId(item);
     if (!appointmentId) return;
@@ -222,7 +237,7 @@ export default function AppointmentsListPage() {
   }
 
   return (
-    <Card className="rounded-[28px] border-slate-200 shadow-sm">
+    <Card className="rounded-2xl border-slate-200 shadow-sm">
       <CardHeader className="pb-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
@@ -316,23 +331,23 @@ export default function AppointmentsListPage() {
               return (
                 <div
                   key={appointmentId}
-                  className="rounded-[22px] border border-slate-200 bg-white p-5"
+                  className="rounded-xl border border-slate-200 bg-white p-4 md:p-5 shadow-sm transition hover:shadow-md"
                 >
-                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-[18px] font-extrabold tracking-tight text-slate-950">
+                        <h3 className="text-base md:text-lg font-extrabold tracking-tight text-slate-950 leading-tight">
                           {doctorName}
                         </h3>
 
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${statusClass(status)}`}
+                          className={`rounded-full px-2 py-0.5 md:px-3 md:py-1 text-[10px] md:text-xs font-bold uppercase tracking-widest ${statusClass(status)}`}
                         >
                           {status}
                         </span>
 
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${typeClass(
+                          className={`rounded-full px-2 py-0.5 md:px-3 md:py-1 text-[10px] md:text-xs font-bold uppercase tracking-widest ${typeClass(
                             item?.appointmentType,
                           )}`}
                         >
@@ -340,10 +355,12 @@ export default function AppointmentsListPage() {
                         </span>
                       </div>
 
-                      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
-                        <span>{item?.specialty || "-"}</span>
-                        <span>{formatDateOnly(item?.startTime)}</span>
-                        <span>
+                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs md:text-sm text-slate-600">
+                        <span className="font-bold text-slate-800">{item?.specialty || "-"}</span>
+                        <span className="text-slate-300">•</span>
+                        <span className="font-semibold">{formatDateOnly(item?.startTime)}</span>
+                        <span className="text-slate-300">•</span>
+                        <span className="font-semibold">
                           {formatTimeOnly(item?.startTime)} -{" "}
                           {formatTimeOnly(item?.endTime)}
                         </span>
@@ -360,10 +377,10 @@ export default function AppointmentsListPage() {
                       ) : null}
 
                       {item?.reason ? (
-                        <div className="mt-3 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
-                          <span className="font-semibold text-slate-900">
+                        <div className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs md:text-sm text-slate-700 italic border border-slate-100">
+                          <span className="font-semibold text-slate-900 not-italic mr-1">
                             Reason:
-                          </span>{" "}
+                          </span>
                           {item.reason}
                         </div>
                       ) : null}
@@ -420,6 +437,17 @@ export default function AppointmentsListPage() {
                       {isOnline && status !== "CANCELLED" ? (
                         <Button onClick={() => openTelemedicine(item)}>
                           Telemedicine
+                        </Button>
+                      ) : null}
+
+                      {["COMPLETED", "CANCELLED", "REJECTED"].includes(status) ? (
+                        <Button
+                          variant="outline"
+                          onClick={() => handleDelete(appointmentId)}
+                          disabled={busy}
+                          className="border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300"
+                        >
+                          {busy ? "Working..." : "Delete"}
                         </Button>
                       ) : null}
                     </div>

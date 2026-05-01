@@ -68,9 +68,13 @@ export default function PatientPrescriptionsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <div className="mb-12">
-        <h1 className="text-4xl font-black tracking-tight text-slate-950 leading-tight">My Medical History</h1>
-        <p className="mt-2 text-lg font-medium text-slate-600 max-w-2xl">Access all your digital prescriptions and medical advice in one secure place.</p>
+      <div className="mb-8">
+        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+          My Medical History
+        </h1>
+        <p className="mt-1.5 text-base font-medium text-slate-500 max-w-2xl">
+          Access all your digital prescriptions and medical advice in one secure place.
+        </p>
       </div>
 
       {loading ? (
@@ -93,12 +97,12 @@ export default function PatientPrescriptionsPage() {
         <div className="grid gap-10">
           {/* Search Header */}
           <div className="relative group max-w-2xl mx-auto md:mx-0">
-            <Search className="absolute left-6 top-5 h-6 w-6 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+            <Search className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
             <Input 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by doctor or diagnosis..." 
-              className="pl-16 h-16 rounded-[28px] border-2 border-slate-100 bg-white shadow-xl shadow-slate-200/40 text-lg font-bold transition-all focus:border-emerald-200" 
+              className="pl-12 h-12 rounded-2xl border-2 border-slate-100 bg-white shadow-lg shadow-slate-200/40 text-base font-bold transition-all focus:border-emerald-200" 
             />
           </div>
 
@@ -107,52 +111,52 @@ export default function PatientPrescriptionsPage() {
             {filteredPrescriptions.map((p) => (
               <div key={p.id} className="w-full">
                 <Card 
-                  className="rounded-[32px] border-2 border-slate-50 shadow-xl shadow-slate-200/20 overflow-hidden transform transition-all duration-300 hover:shadow-emerald-500/10 hover:border-emerald-100 group cursor-pointer"
+                  className="rounded-2xl border-2 border-slate-50 shadow-lg shadow-slate-200/20 overflow-hidden transform transition-all duration-300 hover:shadow-emerald-500/10 hover:border-emerald-100 group cursor-pointer"
                   onClick={() => handleView(p)}
                 >
-                  <div className="bg-slate-950 px-8 py-4 flex items-center justify-between text-white">
-                     <div className="flex items-center gap-3">
-                       <Calendar size={16} className="text-emerald-400" />
-                       <span className="text-xs font-black uppercase tracking-widest">{new Date(p.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  <div className="bg-slate-950 px-4 py-2.5 md:px-5 md:py-3 flex items-center justify-between text-white">
+                     <div className="flex items-center gap-2 md:gap-3">
+                       <Calendar size={14} className="text-emerald-400" />
+                       <span className="text-[10px] md:text-xs font-black uppercase tracking-widest">{new Date(p.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                      </div>
-                     <div className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest border border-white/10">
+                     <div className="flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 md:px-3 md:py-1 text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-white/10">
                        Ref: {p.id.slice(0, 8)}
                      </div>
                   </div>
-                  <CardContent className="p-8">
-                    <div className="flex flex-col md:flex-row justify-between gap-6">
-                       <div className="flex-1 flex flex-col md:flex-row gap-8 items-start">
-                          <div className="flex items-center gap-4">
-                             <div className="h-14 w-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                               <Stethoscope size={28} />
+                  <CardContent className="p-4 md:p-5">
+                    <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-5">
+                       <div className="flex-1 flex flex-col md:flex-row gap-4 md:gap-5 items-start md:items-center">
+                          <div className="flex items-center gap-3">
+                             <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                               <Stethoscope size={20} className="md:w-6 md:h-6" />
                              </div>
                              <div>
-                               <h4 className="text-xl font-black text-slate-900">Dr. {p.doctorName}</h4>
-                               <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Medical Specialist</p>
+                               <h4 className="text-lg font-black text-slate-900 leading-tight">Dr. {p.doctorName}</h4>
+                               <p className="text-slate-500 text-[10px] md:text-[11px] font-bold uppercase tracking-widest mt-0.5">Medical Specialist</p>
                              </div>
                           </div>
                           
-                          <div className="w-px bg-slate-100 h-14 hidden md:block" />
+                          <div className="w-px bg-slate-100 h-10 hidden md:block" />
                           
-                          <div className="flex-1">
-                             <span className="text-[10px] font-black text-slate-400 uppercase leading-none">Primary Diagnosis</span>
-                             <p className="text-md font-black text-slate-800 line-clamp-2 mt-1 italic">"{p.diagnosis || "General medical advice"}"</p>
+                          <div className="flex-1 min-w-0">
+                             <span className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase leading-none block mb-1">Primary Diagnosis</span>
+                             <p className="text-sm md:text-base font-bold text-slate-800 truncate italic">"{p.diagnosis || "General medical advice"}"</p>
                           </div>
                        </div>
                        
-                       <div className="flex flex-col gap-3 justify-center min-w-[170px]">
+                       <div className="flex flex-row md:flex-row gap-3 md:gap-3 justify-center min-w-full md:min-w-max md:items-center">
                           <Button 
                             onClick={(e) => { e.stopPropagation(); handleView(p); }}
-                            className="w-full h-12 rounded-xl bg-slate-900 hover:bg-slate-950 text-white font-black text-xs uppercase tracking-widest shadow-lg transition-transform"
+                            className="flex-1 md:w-auto md:px-6 h-11 md:h-12 rounded-xl bg-slate-900 hover:bg-slate-950 text-white font-black text-xs md:text-sm uppercase tracking-widest shadow-md transition-transform"
                           >
                             View Details
                           </Button>
                           <Button 
                             variant="outline" 
                             onClick={(e) => { e.stopPropagation(); generatePrescriptionPDF(p); }}
-                            className="w-full h-12 rounded-xl border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50"
+                            className="flex-1 md:w-auto md:px-6 h-11 md:h-12 rounded-xl border-slate-200 text-slate-700 font-bold text-xs md:text-sm hover:bg-slate-50"
                           >
-                            <Download size={16} className="mr-2" /> Download PDF
+                            <Download size={16} className="mr-1.5" /> <span className="hidden xl:inline">Download</span> PDF
                           </Button>
                        </div>
                     </div>

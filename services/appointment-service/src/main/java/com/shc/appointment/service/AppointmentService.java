@@ -21,4 +21,6 @@ public interface AppointmentService {
     AppointmentResponse cancel(UUID id);
 
     AppointmentResponse updateStatus(UUID id, AppointmentStatus status);
+
+    void delete(UUID id);
 }

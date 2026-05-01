@@ -43,6 +43,12 @@ public class AuthController {
         return ResponseEntity.ok(doctors);
     }
 
+    @GetMapping("/users/role/{role}")
+    public ResponseEntity<List<AppUser>> getUsersByRole(@PathVariable String role) {
+        List<AppUser> users = authService.getUsersByRole(role);
+        return ResponseEntity.ok(users);
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<AppUser> getUserById(@PathVariable String userId) {
         AppUser user = authService.getUserById(userId);

@@ -21,6 +21,7 @@ public class Patient {
     @Column(columnDefinition = "UUID")
     private UUID id;
 
+    @Column(name = "user_id")
     private String userId;
     private String nic;
     private String name;
@@ -29,6 +30,8 @@ public class Patient {
     private GenderType gender;
     private String email;
     private String phone;
+    @Column(length = 1000)
+    private String profileImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -100,6 +103,14 @@ public class Patient {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public LocalDateTime getCreatedAt() {

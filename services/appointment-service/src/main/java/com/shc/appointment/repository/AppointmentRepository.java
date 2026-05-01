@@ -27,5 +27,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
         String patientId,
         LocalDateTime endTime,
         LocalDateTime startTime
-);
+    );
+    
+    List<Appointment> findByStatusAndReminderSentFalseAndStartTimeBetween(AppointmentStatus status, LocalDateTime start, LocalDateTime end);
 }

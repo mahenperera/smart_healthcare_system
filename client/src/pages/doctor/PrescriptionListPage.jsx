@@ -73,14 +73,14 @@ export default function DoctorPrescriptionListPage() {
     <div className="mx-auto max-w-6xl px-4 py-12">
       <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-950">Prescription History</h1>
-          <p className="mt-2 text-slate-600 font-medium">Manage and review all medical prescriptions issued to your patients.</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Prescription History</h1>
+          <p className="mt-1 text-slate-500 font-medium">Manage and review all medical prescriptions issued to your patients.</p>
         </div>
         <Button 
           onClick={() => navigate("/doctor/prescriptions/new")}
-          className="h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-200 transition-all flex items-center gap-2"
+          className="h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2"
         >
-          <Plus size={20} /> Issue New Prescription
+          <Plus size={18} /> Issue New Prescription
         </Button>
       </div>
 
@@ -93,20 +93,20 @@ export default function DoctorPrescriptionListPage() {
         </div>
 
         {/* Search & Results */}
-        <Card className="rounded-[32px] border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
-          <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-8">
+        <Card className="rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden bg-white">
+          <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-6 md:px-8">
              <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search by patient name, diagnosis or prescription Ref ID..." 
-                    className="pl-12 h-12 rounded-2xl border-slate-200 bg-white" 
+                    className="pl-10 h-11 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-100 transition-all text-sm font-semibold" 
                   />
                 </div>
-                <Button variant="outline" className="h-12 rounded-2xl border-slate-200 px-6 font-bold text-slate-600">
-                   <Filter size={18} className="mr-2" /> Filters
+                <Button variant="outline" className="h-11 rounded-xl border-slate-200 px-5 font-bold text-slate-600 shadow-sm">
+                   <Filter size={16} className="mr-2" /> Filters
                 </Button>
              </div>
           </CardHeader>
@@ -127,47 +127,47 @@ export default function DoctorPrescriptionListPage() {
                  <table className="w-full text-left border-collapse">
                    <thead>
                      <tr className="bg-slate-50 border-b border-slate-100">
-                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">Date / Ref</th>
-                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">Patient</th>
-                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">Diagnosis</th>
-                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">Meds</th>
-                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
+                       <th className="px-8 py-4 text-xs font-bold text-slate-500">Date / Ref</th>
+                       <th className="px-8 py-4 text-xs font-bold text-slate-500">Patient</th>
+                       <th className="px-8 py-4 text-xs font-bold text-slate-500">Diagnosis</th>
+                       <th className="px-8 py-4 text-xs font-bold text-slate-500">Meds</th>
+                       <th className="px-8 py-4 text-xs font-bold text-slate-500 text-right">Actions</th>
                      </tr>
                    </thead>
                    <tbody>
                      {filteredPrescriptions.map((p) => (
                        <tr key={p.id} className="group hover:bg-slate-50/50 transition-colors border-b border-slate-50">
-                         <td className="px-8 py-6">
+                         <td className="px-8 py-4">
                             <div className="flex flex-col">
-                               <span className="text-sm font-black text-slate-950">{new Date(p.createdAt).toLocaleDateString()}</span>
-                               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">#{p.id.slice(0, 8)}</span>
+                               <span className="text-sm font-bold text-slate-900">{new Date(p.createdAt).toLocaleDateString()}</span>
+                               <span className="text-[11px] font-semibold text-slate-400">#{p.id.slice(0, 8)}</span>
                             </div>
                          </td>
-                         <td className="px-8 py-6">
+                         <td className="px-8 py-4">
                             <div className="flex items-center gap-3">
-                               <div className="h-9 w-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-black text-xs">
+                               <div className="h-9 w-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-sm">
                                  {p.patientName?.[0] || 'P'}
                                </div>
                                <div className="flex flex-col">
-                                  <span className="text-sm font-black text-slate-950">{p.patientName}</span>
+                                  <span className="text-sm font-bold text-slate-900">{p.patientName}</span>
                                   <span className="text-[11px] font-medium text-slate-500">{p.patientAge} Yrs, {p.patientGender}</span>
                                </div>
                             </div>
                          </td>
-                         <td className="px-8 py-6 min-w-[200px]">
-                            <span className="text-sm font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg line-clamp-1 truncate block">
+                         <td className="px-8 py-4 min-w-[200px]">
+                            <span className="text-sm font-semibold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg line-clamp-1 truncate block max-w-xs border border-slate-200/60">
                               {p.diagnosis || "No diagnosis"}
                             </span>
                          </td>
-                         <td className="px-8 py-6">
-                            <div className="flex items-center gap-1">
-                               <span className="text-xs font-black text-slate-900 bg-emerald-100/50 text-emerald-700 px-2 py-1 rounded-md">
+                         <td className="px-8 py-4">
+                            <div className="flex items-center gap-1.5">
+                               <span className="text-xs font-bold text-slate-900 bg-emerald-100/50 text-emerald-700 px-2.5 py-0.5 rounded-md">
                                  {p.medications?.length || 0}
                                </span>
                                <span className="text-xs font-medium text-slate-500">Meds</span>
                             </div>
                          </td>
-                         <td className="px-8 py-6 text-right">
+                         <td className="px-8 py-4 text-right">
                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                <Button 
                                  variant="ghost" 
@@ -209,13 +209,13 @@ export default function DoctorPrescriptionListPage() {
 
 function StatCard({ icon, label, value }) {
   return (
-    <Card className="rounded-[32px] border-slate-200 shadow-xl shadow-slate-200/20 p-6 flex items-center gap-5 bg-white">
-      <div className="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 shadow-sm">
+    <Card className="rounded-2xl border-slate-200 shadow-md p-5 flex items-center gap-4 bg-white">
+      <div className="h-12 w-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 shadow-sm">
         {icon}
       </div>
       <div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-        <p className="text-2xl font-black text-slate-950">{value}</p>
+        <p className="text-xs font-bold text-slate-500 mb-0.5">{label}</p>
+        <p className="text-2xl font-extrabold text-slate-900">{value}</p>
       </div>
     </Card>
   );

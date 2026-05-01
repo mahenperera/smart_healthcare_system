@@ -10,12 +10,17 @@ import com.shc.patient.service.PatientService;
 import com.shc.patient.dto.PatientRequestDTO;
 import com.shc.patient.model.Patient;
 import com.shc.patient.repository.PatientRepository;
+import com.shc.patient.service.CloudinaryService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public  class PatientServiceImpl implements PatientService {
+public class PatientServiceImpl implements PatientService {
 
     @Autowired
     private PatientRepository patientRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public void createPatient(PatientRequestDTO patientRequestDTO) {
@@ -26,6 +31,7 @@ public  class PatientServiceImpl implements PatientService {
         patient.setGender(patientRequestDTO.getGender());
         patient.setEmail(patientRequestDTO.getEmail());
         patient.setPhone(patientRequestDTO.getPhone());
+        patient.setProfileImageUrl(patientRequestDTO.getProfileImageUrl());
         patientRepository.save(patient);
     
     }
@@ -39,37 +45,39 @@ public  class PatientServiceImpl implements PatientService {
     public PatientRequestDTO getPatientById(UUID id) {
         Patient patient = patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Patient not found"));
         PatientRequestDTO patientRequestDTO = new PatientRequestDTO();
+        patientRequestDTO.setId(patient.getId());
         patientRequestDTO.setNic(patient.getNic());
         patientRequestDTO.setName(patient.getName());
         patientRequestDTO.setGender(patient.getGender());
         patientRequestDTO.setEmail(patient.getEmail());
         patientRequestDTO.setPhone(patient.getPhone());
+        patientRequestDTO.setProfileImageUrl(patient.getProfileImageUrl());
+        patientRequestDTO.setUserId(patient.getUserId());
+        patientRequestDTO.setCreatedAt(patient.getCreatedAt());
+        patientRequestDTO.setUpdatedAt(patient.getUpdatedAt());
         return patientRequestDTO;
     }
 
     @Override
-    public PatientRequestDTO getPatientByUserId(String userId) {
-        Patient patient = patientRepository.findByUserId(userId)
+    public Patient getPatientByUserId(String userId) {
+        return patientRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Patient not found for userId: " + userId));
-        PatientRequestDTO dto = new PatientRequestDTO();
-        dto.setUserId(patient.getUserId());
-        dto.setNic(patient.getNic());
-        dto.setName(patient.getName());
-        dto.setGender(patient.getGender());
-        dto.setEmail(patient.getEmail());
-        dto.setPhone(patient.getPhone());
-        return dto;
     }
 
     @Override
     public PatientRequestDTO getPatientByNic(String nic) {
         Patient patient = patientRepository.findByNic(nic).orElseThrow(() -> new RuntimeException("Patient not found"));
         PatientRequestDTO patientRequestDTO = new PatientRequestDTO();
+        patientRequestDTO.setId(patient.getId());
         patientRequestDTO.setNic(patient.getNic());
         patientRequestDTO.setName(patient.getName());
         patientRequestDTO.setGender(patient.getGender());
         patientRequestDTO.setEmail(patient.getEmail());
         patientRequestDTO.setPhone(patient.getPhone());
+        patientRequestDTO.setProfileImageUrl(patient.getProfileImageUrl());
+        patientRequestDTO.setUserId(patient.getUserId());
+        patientRequestDTO.setCreatedAt(patient.getCreatedAt());
+        patientRequestDTO.setUpdatedAt(patient.getUpdatedAt());
         return patientRequestDTO;
     }
 
@@ -81,7 +89,9 @@ public  class PatientServiceImpl implements PatientService {
         patient.setGender(patientRequestDTO.getGender());
         patient.setEmail(patientRequestDTO.getEmail());
         patient.setPhone(patientRequestDTO.getPhone());
+        patient.setProfileImageUrl(patientRequestDTO.getProfileImageUrl());
         patientRepository.save(patient);
+        patientRequestDTO.setId(patient.getId());
         return patientRequestDTO;
     }
 
@@ -90,6 +100,12 @@ public  class PatientServiceImpl implements PatientService {
         patientRepository.deleteById(id);
     }
 
-    
-    
+    @Override
+    public String updateProfileImage(UUID id, MultipartFile file) {
+        Patient patient = patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Patient not found"));
+        String imageUrl = cloudinaryService.uploadImage(file);
+        patient.setProfileImageUrl(imageUrl);
+        patientRepository.save(patient);
+        return imageUrl;
+    }
 }
