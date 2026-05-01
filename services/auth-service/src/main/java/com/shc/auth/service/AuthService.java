@@ -14,6 +14,8 @@ public interface AuthService {
     AuthResponse verifyDoctor(VerifyDoctorRequest request);
 
     List<AppUser> getPendingDoctors();
+    
+    List<AppUser> getUsersByRole(String role);
 
     AppUser getUserById(String userId);
 

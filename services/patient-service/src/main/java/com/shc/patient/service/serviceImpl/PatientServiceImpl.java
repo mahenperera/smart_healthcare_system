@@ -52,6 +52,9 @@ public class PatientServiceImpl implements PatientService {
         patientRequestDTO.setEmail(patient.getEmail());
         patientRequestDTO.setPhone(patient.getPhone());
         patientRequestDTO.setProfileImageUrl(patient.getProfileImageUrl());
+        patientRequestDTO.setUserId(patient.getUserId());
+        patientRequestDTO.setCreatedAt(patient.getCreatedAt());
+        patientRequestDTO.setUpdatedAt(patient.getUpdatedAt());
         return patientRequestDTO;
     }
 
@@ -72,6 +75,9 @@ public class PatientServiceImpl implements PatientService {
         patientRequestDTO.setEmail(patient.getEmail());
         patientRequestDTO.setPhone(patient.getPhone());
         patientRequestDTO.setProfileImageUrl(patient.getProfileImageUrl());
+        patientRequestDTO.setUserId(patient.getUserId());
+        patientRequestDTO.setCreatedAt(patient.getCreatedAt());
+        patientRequestDTO.setUpdatedAt(patient.getUpdatedAt());
         return patientRequestDTO;
     }
 

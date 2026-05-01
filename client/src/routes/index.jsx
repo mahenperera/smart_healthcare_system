@@ -148,6 +148,8 @@ import DoctorProfilePage from "../pages/doctor/DoctorProfilePage";
 import DoctorPrescriptionListPage from "../pages/doctor/PrescriptionListPage";
 import CreatePrescriptionPage from "../pages/doctor/CreatePrescriptionPage";
 import AdminDoctorVerificationPage from "../pages/admin/AdminDoctorVerificationPage";
+import AdminPatientManagementPage from "../pages/admin/AdminPatientManagementPage";
+import AdminDoctorManagementPage from "../pages/admin/AdminDoctorManagementPage";
 import DoctorDirectoryPage from "../pages/patient/DoctorDirectoryPage";
 import DoctorDetailPage from "../pages/patient/DoctorDetailPage";
 import PatientPrescriptionsPage from "../pages/patient/PatientPrescriptionsPage";
@@ -218,6 +220,14 @@ export default function AppRoutes() {
           <Route
             path="/admin/verification"
             element={<AdminDoctorVerificationPage />}
+          />
+          <Route
+            path="/admin/patients"
+            element={<AdminPatientManagementPage />}
+          />
+          <Route
+            path="/admin/doctors"
+            element={<AdminDoctorManagementPage />}
           />
           <Route
             path="/notifications/settings"

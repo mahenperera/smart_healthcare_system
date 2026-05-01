@@ -177,6 +177,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public List<AppUser> getUsersByRole(String role) {
+        return authRepository.findByRole(role.toUpperCase());
+    }
+
+    @Override
     public AppUser getUserById(String userId) {
         return authRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

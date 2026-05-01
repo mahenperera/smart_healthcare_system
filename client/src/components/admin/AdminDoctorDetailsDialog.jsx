@@ -1,60 +1,64 @@
 import { 
   X, 
-  CheckCircle2, 
-  XCircle, 
   User, 
-  Stethoscope, 
-  GraduationCap, 
-  History, 
-  FileText,
-  Hospital,
-  ShieldCheck,
-  AlertCircle,
-  Loader2,
+  Calendar,
   Building2,
   Award,
-  DollarSign
+  DollarSign,
+  History,
+  ShieldCheck,
+  ShieldAlert,
+  AlertCircle,
+  Loader2,
+  Stethoscope,
+  ClipboardList
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { doctorApi } from "../../api/doctor-api";
+import { authApi } from "../../api/auth-api";
+import { appointmentApi } from "../../api/appointment-api";
 import { Button } from "../ui/button";
 
-export default function DoctorReviewDialog({ userId, isOpen, onClose, onAction }) {
+export default function AdminDoctorDetailsDialog({ doctorId, isOpen, onClose }) {
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState("");
+  const [stats, setStats] = useState({ appointments: 0 });
 
   useEffect(() => {
-    if (isOpen && userId) {
+    if (isOpen && doctorId) {
       fetchDoctorDetails();
     }
-  }, [isOpen, userId]);
+  }, [isOpen, doctorId]);
 
   async function fetchDoctorDetails() {
     try {
       setLoading(true);
       setError("");
-      const data = await doctorApi.getByUserId(userId);
-      setDoctor(data);
+      
+      const [data, authData] = await Promise.all([
+        doctorApi.getByUserId(doctorId),
+        authApi.getUserById(doctorId)
+      ]);
+      
+      setDoctor({
+        ...data,
+        verified: authData?.verified || false
+      });
+      
+      try {
+        const appointments = await appointmentApi.list({ doctorId });
+        setStats({ appointments: appointments.length });
+      } catch (err) {
+        console.warn("Could not fetch appointment stats");
+      }
+
     } catch (err) {
-      setError("Failed to fetch detailed profile. The profile might not have been fully created yet.");
+      setError("Failed to fetch doctor details.");
     } finally {
       setLoading(false);
     }
   }
-
-  const handleAction = async (approved) => {
-    try {
-      setActionLoading(true);
-      await onAction(userId, approved);
-      onClose();
-    } catch (err) {
-      setError("Failed to process verification. Please try again.");
-    } finally {
-      setActionLoading(false);
-    }
-  };
 
   if (!isOpen) return null;
 
@@ -66,9 +70,9 @@ export default function DoctorReviewDialog({ userId, isOpen, onClose, onAction }
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
            <div className="flex items-center gap-3">
              <div className="h-9 w-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100">
-               <ShieldCheck size={20} />
+               <Stethoscope size={20} />
              </div>
-             <h2 className="text-lg font-bold text-slate-900">Credential Review</h2>
+             <h2 className="text-lg font-bold text-slate-900">Practitioner Profile</h2>
            </div>
            <button onClick={onClose} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
              <X size={18} />
@@ -79,7 +83,7 @@ export default function DoctorReviewDialog({ userId, isOpen, onClose, onAction }
           {loading ? (
             <div className="py-16 text-center flex flex-col items-center gap-4">
                <Loader2 className="animate-spin text-emerald-500" size={32} />
-               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Fetching details...</p>
+               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Loading Profile...</p>
             </div>
           ) : error ? (
             <div className="py-10 px-6 bg-rose-50 rounded-2xl border border-rose-100 flex flex-col items-center gap-4 text-center">
@@ -91,8 +95,12 @@ export default function DoctorReviewDialog({ userId, isOpen, onClose, onAction }
             <div className="space-y-8">
                {/* Profile Section */}
                <div className="flex items-start gap-5">
-                  <div className="h-20 w-20 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 border-2 border-dashed border-slate-200 shrink-0">
-                    <User size={40} />
+                  <div className="h-20 w-20 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 border-2 border-dashed border-slate-200 shrink-0 overflow-hidden">
+                    {doctor.profile_image_url ? (
+                      <img src={doctor.profile_image_url} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <User size={40} />
+                    )}
                   </div>
                   <div className="pt-1">
                     <h3 className="text-2xl font-bold text-slate-900 leading-tight">{doctor.fullName}</h3>
@@ -103,13 +111,25 @@ export default function DoctorReviewDialog({ userId, isOpen, onClose, onAction }
                   </div>
                </div>
 
+               {/* Stats Grid */}
+               <div className="grid grid-cols-3 gap-4">
+                  <StatMini label="Total Sessions" value={stats.appointments} icon={<ClipboardList size={14} />} color="blue" />
+                  <StatMini label="Experience" value={`${doctor.experienceYears}Y`} icon={<History size={14} />} color="emerald" />
+                  <StatMini 
+                    label="Status" 
+                    value={doctor.verified ? "Verified" : "Pending"} 
+                    icon={doctor.verified ? <ShieldCheck size={14} /> : <ShieldAlert size={14} />} 
+                    color={doctor.verified ? "emerald" : "amber"} 
+                  />
+               </div>
+
                {/* Detailed Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
-                   <DetailBlock icon={<Building2 size={16} />} label="Primary Hospital" value={doctor.hospital} />
-                   <DetailBlock icon={<History size={16} />} label="Clinical Experience" value={`${doctor.experienceYears} Years`} />
-                   <DetailBlock icon={<Award size={16} />} label="Medical Qualifications" value={doctor.qualifications} />
-                   <DetailBlock icon={<DollarSign size={16} />} label="Consultation Fee" value={doctor.consultationFee ? `Rs. ${doctor.consultationFee}` : "Not Set"} />
-                </div>
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
+                  <DetailBlock icon={<Building2 size={16} />} label="Primary Hospital" value={doctor.hospital} />
+                  <DetailBlock icon={<Award size={16} />} label="Medical Qualifications" value={doctor.qualifications} />
+                  <DetailBlock icon={<DollarSign size={16} />} label="Consultation Fee" value={doctor.consultationFee ? `Rs. ${doctor.consultationFee}` : "Not Set"} />
+                  <DetailBlock icon={<Calendar size={16} />} label="Joined Platform" value={doctor.createdAt ? new Date(doctor.createdAt).toLocaleDateString() : "N/A"} />
+               </div>
 
                {/* Bio Section */}
                <div className="relative pt-6 border-t border-slate-100">
@@ -127,20 +147,12 @@ export default function DoctorReviewDialog({ userId, isOpen, onClose, onAction }
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 bg-slate-50/80 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+        <div className="p-5 bg-slate-50/80 border-t border-slate-100 flex justify-end">
            <Button 
-             onClick={() => handleAction(true)}
-             disabled={actionLoading || !doctor}
-             className="flex-1 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-sm"
+             onClick={onClose}
+             className="h-10 rounded-xl bg-slate-900 hover:bg-slate-950 text-white font-bold text-xs uppercase tracking-widest transition-all px-8"
            >
-             {actionLoading ? <Loader2 className="animate-spin" size={18} /> : <><CheckCircle2 size={18} /> Approve Account</>}
-           </Button>
-           <Button 
-             onClick={() => handleAction(false)}
-             disabled={actionLoading || !doctor}
-             className="flex-1 h-11 rounded-xl bg-white border border-rose-200 hover:bg-rose-50 text-rose-600 font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2"
-           >
-             {actionLoading ? <Loader2 className="animate-spin" size={18} /> : <><XCircle size={18} /> Reject Request</>}
+             Close Profile
            </Button>
         </div>
       </div>
@@ -158,6 +170,25 @@ function DetailBlock({ icon, label, value }) {
          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
          <p className="text-sm font-bold text-slate-800 leading-snug">{value || "Not specified"}</p>
        </div>
+    </div>
+  );
+}
+
+function StatMini({ label, value, icon, color }) {
+  const colors = {
+    blue: "bg-blue-50 text-blue-600 border-blue-100",
+    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    amber: "bg-amber-50 text-amber-600 border-amber-100",
+    slate: "bg-slate-50 text-slate-600 border-slate-100"
+  };
+  
+  return (
+    <div className={`p-3 rounded-xl border ${colors[color] || colors.slate}`}>
+       <div className="flex items-center gap-1.5 mb-1">
+         {icon}
+         <span className="text-[9px] font-bold uppercase tracking-wider">{label}</span>
+       </div>
+       <p className="text-sm font-black">{value}</p>
     </div>
   );
 }

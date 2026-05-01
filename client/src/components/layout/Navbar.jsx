@@ -81,7 +81,11 @@ export default function Navbar() {
                 </>
               )}
               {role === "ADMIN" && (
-                <NavItem to="/admin/verification">Doctor Verification</NavItem>
+                <>
+                  <NavItem to="/admin/verification">Verification</NavItem>
+                  <NavItem to="/admin/patients">Patients</NavItem>
+                  <NavItem to="/admin/doctors">Doctors</NavItem>
+                </>
               )}
               {role === "PATIENT" && (
                 <>
@@ -167,7 +171,11 @@ export default function Navbar() {
                 </>
               )}
               {role === "ADMIN" && (
-                <NavItem to="/admin/verification" onClick={() => setIsMobileMenuOpen(false)}>Doctor Verification</NavItem>
+                <>
+                  <NavItem to="/admin/verification" onClick={() => setIsMobileMenuOpen(false)}>Verification</NavItem>
+                  <NavItem to="/admin/patients" onClick={() => setIsMobileMenuOpen(false)}>Patients</NavItem>
+                  <NavItem to="/admin/doctors" onClick={() => setIsMobileMenuOpen(false)}>Doctors</NavItem>
+                </>
               )}
               {role === "PATIENT" && (
                 <>

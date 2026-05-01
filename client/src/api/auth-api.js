@@ -8,6 +8,7 @@ export const authApi = {
 
   verifyDoctor: (payload) => http.post("/api/auth/verify-doctor", payload),
   getPendingDoctors: () => http.get("/api/auth/pending-doctors"),
+  getUsersByRole: (role) => http.get(`/api/auth/users/role/${role}`),
   getUserById: (userId) => http.get(`/api/auth/user/${userId}`),
   getUserByEmail: (email) =>
     http.get(`/api/auth/user/email/${encodeURIComponent(email)}`),
