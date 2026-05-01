@@ -96,8 +96,8 @@ export default function AdminDoctorDetailsDialog({ doctorId, isOpen, onClose }) 
                {/* Profile Section */}
                <div className="flex items-start gap-5">
                   <div className="h-20 w-20 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 border-2 border-dashed border-slate-200 shrink-0 overflow-hidden">
-                    {doctor.profile_image_url ? (
-                      <img src={doctor.profile_image_url} alt="" className="h-full w-full object-cover" />
+                    {doctor.profileImageUrl ? (
+                      <img src={doctor.profileImageUrl} alt="" className="h-full w-full object-cover" />
                     ) : (
                       <User size={40} />
                     )}

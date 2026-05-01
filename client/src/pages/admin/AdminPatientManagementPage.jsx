@@ -135,11 +135,11 @@ export default function AdminPatientManagementPage() {
                          <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                                <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 border border-slate-200 overflow-hidden">
-                                 {p.profile_image_url ? (
-                                   <img src={p.profile_image_url} alt="" className="h-full w-full object-cover" />
-                                 ) : (
-                                   <User size={18} />
-                                 )}
+                                {p.profileImageUrl ? (
+                                  <img src={p.profileImageUrl} alt="" className="h-full w-full object-cover" />
+                                ) : (
+                                  <User size={18} />
+                                )}
                                </div>
                                <div>
                                  <p className="text-sm font-bold text-slate-900 leading-none mb-1">{p.name}</p>

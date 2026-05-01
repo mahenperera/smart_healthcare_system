@@ -68,81 +68,83 @@ export default function NotificationSettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
-          <Bell className="text-emerald-500 h-8 w-8" />
+    <div className="mx-auto max-w-2xl px-4 py-8">
+      <div className="mb-6">
+        <h1 className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+          <Bell className="text-emerald-500 h-5 w-5" />
           Notification Preferences
         </h1>
-        <p className="mt-2 text-slate-500 font-medium">
-          Control how and when you want to be notified by the Smart Healthcare System.
+        <p className="mt-1.5 text-sm text-slate-500 font-medium">
+          Control how and when you want to be notified by the platform.
         </p>
       </div>
 
-      <Card className="rounded-[2rem] border border-slate-200 shadow-xl bg-white overflow-hidden">
-        <CardHeader className="p-6 md:p-8 bg-slate-50/50 border-b border-slate-100">
-          <CardTitle className="text-xl font-extrabold text-slate-900">
+      <Card className="rounded-2xl border border-slate-200 shadow-sm bg-white overflow-hidden">
+        <CardHeader className="px-6 py-4 bg-slate-50/50 border-b border-slate-100">
+          <CardTitle className="text-sm font-bold uppercase tracking-wider text-slate-500">
             Alert Settings
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 divide-y divide-slate-100">
           
           {/* Appointment Alerts */}
-          <div className="p-6 md:p-8 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition-colors">
-            <div className="flex gap-4">
-              <div className="shrink-0 mt-1 h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
-                <CalendarClock size={20} className="text-blue-600" />
+          <div className="p-6 flex items-center justify-between gap-4 hover:bg-slate-50/20 transition-colors">
+            <div className="flex items-center gap-4">
+              <div className="shrink-0 h-9 w-9 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
+                <CalendarClock size={18} className="text-blue-600" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900">Appointment Alerts</h3>
-                <p className="text-sm font-medium text-slate-500 mt-1">
-                  Receive notifications when appointments are booked, confirmed, canceled, or rejected.
+                <h3 className="text-sm font-bold text-slate-900">Appointment Alerts</h3>
+                <p className="text-[13px] font-medium text-slate-500 mt-0.5">
+                  Updates on bookings, confirmations, and cancellations.
                 </p>
               </div>
             </div>
             <button 
               onClick={() => handleToggle('appointmentAlertsEnabled')}
-              className={`shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${settings.appointmentAlertsEnabled ? 'bg-emerald-500' : 'bg-slate-200'}`}
+              className={`shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 ${settings.appointmentAlertsEnabled ? 'bg-emerald-500' : 'bg-slate-200'}`}
             >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.appointmentAlertsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+              <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${settings.appointmentAlertsEnabled ? 'translate-x-5' : 'translate-x-1'}`} />
             </button>
           </div>
 
           {/* System Alerts */}
-          <div className="p-6 md:p-8 flex items-start justify-between gap-4 hover:bg-slate-50/50 transition-colors">
-            <div className="flex gap-4">
-              <div className="shrink-0 mt-1 h-10 w-10 rounded-full bg-amber-50 flex items-center justify-center border border-amber-100">
-                <Info size={20} className="text-amber-600" />
+          <div className="p-6 flex items-center justify-between gap-4 hover:bg-slate-50/20 transition-colors">
+            <div className="flex items-center gap-4">
+              <div className="shrink-0 h-9 w-9 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-100">
+                <Info size={18} className="text-amber-600" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-900">System Alerts</h3>
-                <p className="text-sm font-medium text-slate-500 mt-1">
-                  Receive important system updates, security alerts, and platform announcements.
+                <h3 className="text-sm font-bold text-slate-900">System Alerts</h3>
+                <p className="text-[13px] font-medium text-slate-500 mt-0.5">
+                  Important system updates and security alerts.
                 </p>
               </div>
             </div>
             <button 
               onClick={() => handleToggle('systemAlertsEnabled')}
-              className={`shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${settings.systemAlertsEnabled ? 'bg-emerald-500' : 'bg-slate-200'}`}
+              className={`shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 ${settings.systemAlertsEnabled ? 'bg-emerald-500' : 'bg-slate-200'}`}
             >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.systemAlertsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+              <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${settings.systemAlertsEnabled ? 'translate-x-5' : 'translate-x-1'}`} />
             </button>
           </div>
 
         </CardContent>
       </Card>
 
-      <div className="mt-8 flex flex-col items-end gap-4">
-        {error && <div className="w-full rounded-xl bg-red-50 p-4 border border-red-100 text-red-600 text-sm font-bold">{error}</div>}
-        {success && <div className="w-full rounded-xl bg-emerald-50 p-4 border border-emerald-100 text-emerald-700 text-sm font-bold">{success}</div>}
+      <div className="mt-6 space-y-4">
+        {error && <div className="rounded-xl bg-red-50 p-3 border border-red-100 text-red-600 text-xs font-bold">{error}</div>}
+        {success && <div className="rounded-xl bg-emerald-50 p-3 border border-emerald-100 text-emerald-700 text-xs font-bold">{success}</div>}
         
-        <Button 
-          onClick={handleSave}
-          disabled={saving} 
-          className="w-full md:w-auto min-w-[200px] h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all active:scale-[0.98]"
-        >
-          {saving ? "Saving..." : <span className="flex items-center justify-center gap-2"><Save size={18} /> Save Preferences</span>}
-        </Button>
+        <div className="flex justify-end">
+          <Button 
+            onClick={handleSave}
+            disabled={saving} 
+            className="w-full sm:w-auto h-10 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition-all active:scale-[0.98]"
+          >
+            {saving ? "Saving..." : <span className="flex items-center justify-center gap-2"><Save size={14} /> Save Preferences</span>}
+          </Button>
+        </div>
       </div>
     </div>
   );
