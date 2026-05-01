@@ -152,6 +152,7 @@ import DoctorDirectoryPage from "../pages/patient/DoctorDirectoryPage";
 import DoctorDetailPage from "../pages/patient/DoctorDetailPage";
 import PatientPrescriptionsPage from "../pages/patient/PatientPrescriptionsPage";
 import PatientProfilePage from "../pages/patient/PatientProfilePage";
+import PaymentPage from "../pages/patient/PaymentPage";
 import NotificationSettingsPage from "../pages/settings/NotificationSettingsPage";
 import ProtectedRoute from "./protected-route";
 import PublicOnlyRoute from "./public-only-route";
@@ -209,6 +210,10 @@ export default function AppRoutes() {
           <Route
             path="/patient/profile"
             element={<PatientProfilePage />}
+          />
+          <Route
+            path="/patient/payment/:appointmentId"
+            element={<PaymentPage />}
           />
           <Route
             path="/admin/verification"

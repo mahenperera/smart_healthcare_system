@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { User, Save, Upload, Loader2, Mail, Phone, Hash } from "lucide-react";
 import { patientApi } from "../../api/patient-api";
+import { paymentApi } from "../../api/payment-api";
 import { useAuth } from "../../context/AuthContext";
 import {
   Card,
@@ -11,10 +12,12 @@ import {
 } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
+import { CreditCard, DollarSign, Calendar } from "lucide-react";
 
 export default function PatientProfilePage() {
   const { user, role } = useAuth();
   const [profile, setProfile] = useState(null);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -35,8 +38,18 @@ export default function PatientProfilePage() {
   useEffect(() => {
     if (user?.userId && role === "PATIENT") {
       fetchProfile();
+      fetchPayments();
     }
   }, [user, role]);
+
+  async function fetchPayments() {
+    try {
+      const data = await paymentApi.getByPatientId(user.userId);
+      setPayments(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to fetch payments", err);
+    }
+  }
 
   async function fetchProfile() {
     try {
@@ -265,6 +278,72 @@ export default function PatientProfilePage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Payment History */}
+        <Card className="rounded-[2rem] border border-slate-200 shadow-xl bg-white overflow-hidden">
+          <CardHeader className="p-6 md:p-8 md:pb-4 border-b border-slate-50">
+            <CardTitle className="flex items-center gap-2 text-xl font-extrabold text-slate-900">
+              <CreditCard size={20} className="text-emerald-500" /> Payment History
+            </CardTitle>
+            <CardDescription className="font-medium">View your recent consultation payments and billing details.</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {payments.length === 0 ? (
+              <div className="py-12 text-center">
+                <div className="mx-auto h-16 w-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+                  <DollarSign size={32} className="text-slate-300" />
+                </div>
+                <p className="text-slate-500 font-bold">No payment records found.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/50">
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Date</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Amount</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Ref ID</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {payments.map((p) => (
+                      <tr key={p.id} className="hover:bg-slate-50/30 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <Calendar size={14} className="text-slate-400" />
+                            <span className="text-sm font-bold text-slate-700">
+                              {new Date(p.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm font-black text-slate-900">
+                            {p.currency?.toUpperCase()} {p.amount?.toLocaleString()}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                            p.status === 'SUCCESS' ? 'bg-emerald-50 text-emerald-700' : 
+                            p.status === 'PENDING' ? 'bg-amber-50 text-amber-700' : 
+                            'bg-red-50 text-red-700'
+                          }`}>
+                            {p.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-[10px] font-mono font-bold text-slate-400">
+                            {p.stripePaymentIntentId?.substring(0, 15)}...
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <div className="flex flex-col items-center gap-4 pt-4">
           {error && <div className="w-full rounded-xl bg-red-50 p-4 border border-red-100 text-red-600 text-sm font-bold">{error}</div>}

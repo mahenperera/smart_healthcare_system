@@ -386,8 +386,16 @@ export default function NewAppointmentPage() {
         availabilitySlotId: selectedWindow.original.id,
       };
  
-      await appointmentApi.create(payload);
-      nav("/appointments");
+      const createdAppointment = await appointmentApi.create(payload);
+      
+      // Redirect to payment page with appointment details
+      nav(`/patient/payment/${createdAppointment.id}`, { 
+        state: { 
+          amount: selectedDoctor.consultationFee || 1500,
+          appointmentId: createdAppointment.id,
+          doctorName: selectedDoctorName
+        } 
+      });
     } catch (e) {
       setError(e?.message || "Failed to create appointment.");
     } finally {

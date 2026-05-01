@@ -25,6 +25,10 @@ export default defineConfig({
         target: "http://localhost:8085",
         changeOrigin: true,
       },
+      "/api/payments": {
+        target: "http://localhost:8087",
+        changeOrigin: true,
+      },
       "/api/notifications": {
         target: "http://localhost:8088",
         changeOrigin: true,
