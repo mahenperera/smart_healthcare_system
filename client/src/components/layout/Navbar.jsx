@@ -87,6 +87,7 @@ export default function Navbar() {
                   <NavItem to="/doctors">Find a Doctor</NavItem>
                   <NavItem to="/patient/prescriptions">My Prescriptions</NavItem>
                   <NavItem to="/appointments">Appointments</NavItem>
+                  <NavItem to="/patient/profile">My Profile</NavItem>
                 </>
               )}
             </nav>
@@ -169,6 +170,7 @@ export default function Navbar() {
                   <NavItem to="/doctors" onClick={() => setIsMobileMenuOpen(false)}>Find a Doctor</NavItem>
                   <NavItem to="/patient/prescriptions" onClick={() => setIsMobileMenuOpen(false)}>My Prescriptions</NavItem>
                   <NavItem to="/appointments" onClick={() => setIsMobileMenuOpen(false)}>Appointments</NavItem>
+                  <NavItem to="/patient/profile" onClick={() => setIsMobileMenuOpen(false)}>My Profile</NavItem>
                 </>
               )}
             </nav>

@@ -21,4 +21,5 @@ public interface PatientService {
 
     public void deletePatient(java.util.UUID id);
     
+    public String updateProfileImage(java.util.UUID id, org.springframework.web.multipart.MultipartFile file);
 }

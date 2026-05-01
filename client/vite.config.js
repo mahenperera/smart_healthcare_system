@@ -25,6 +25,10 @@ export default defineConfig({
         target: "http://localhost:8085",
         changeOrigin: true,
       },
+      "/api/notifications": {
+        target: "http://localhost:8088",
+        changeOrigin: true,
+      },
       "/health": {
         target: "http://localhost:8084",
         changeOrigin: true,

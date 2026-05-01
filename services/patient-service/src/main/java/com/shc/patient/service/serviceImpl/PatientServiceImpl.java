@@ -10,12 +10,17 @@ import com.shc.patient.service.PatientService;
 import com.shc.patient.dto.PatientRequestDTO;
 import com.shc.patient.model.Patient;
 import com.shc.patient.repository.PatientRepository;
+import com.shc.patient.service.CloudinaryService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public  class PatientServiceImpl implements PatientService {
+public class PatientServiceImpl implements PatientService {
 
     @Autowired
     private PatientRepository patientRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public void createPatient(PatientRequestDTO patientRequestDTO) {
@@ -26,6 +31,7 @@ public  class PatientServiceImpl implements PatientService {
         patient.setGender(patientRequestDTO.getGender());
         patient.setEmail(patientRequestDTO.getEmail());
         patient.setPhone(patientRequestDTO.getPhone());
+        patient.setProfileImageUrl(patientRequestDTO.getProfileImageUrl());
         patientRepository.save(patient);
     
     }
@@ -44,6 +50,7 @@ public  class PatientServiceImpl implements PatientService {
         patientRequestDTO.setGender(patient.getGender());
         patientRequestDTO.setEmail(patient.getEmail());
         patientRequestDTO.setPhone(patient.getPhone());
+        patientRequestDTO.setProfileImageUrl(patient.getProfileImageUrl());
         return patientRequestDTO;
     }
 
@@ -58,6 +65,7 @@ public  class PatientServiceImpl implements PatientService {
         dto.setGender(patient.getGender());
         dto.setEmail(patient.getEmail());
         dto.setPhone(patient.getPhone());
+        dto.setProfileImageUrl(patient.getProfileImageUrl());
         return dto;
     }
 
@@ -70,6 +78,7 @@ public  class PatientServiceImpl implements PatientService {
         patientRequestDTO.setGender(patient.getGender());
         patientRequestDTO.setEmail(patient.getEmail());
         patientRequestDTO.setPhone(patient.getPhone());
+        patientRequestDTO.setProfileImageUrl(patient.getProfileImageUrl());
         return patientRequestDTO;
     }
 
@@ -81,6 +90,7 @@ public  class PatientServiceImpl implements PatientService {
         patient.setGender(patientRequestDTO.getGender());
         patient.setEmail(patientRequestDTO.getEmail());
         patient.setPhone(patientRequestDTO.getPhone());
+        patient.setProfileImageUrl(patientRequestDTO.getProfileImageUrl());
         patientRepository.save(patient);
         return patientRequestDTO;
     }
@@ -90,6 +100,12 @@ public  class PatientServiceImpl implements PatientService {
         patientRepository.deleteById(id);
     }
 
-    
-    
+    @Override
+    public String updateProfileImage(UUID id, MultipartFile file) {
+        Patient patient = patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Patient not found"));
+        String imageUrl = cloudinaryService.uploadImage(file);
+        patient.setProfileImageUrl(imageUrl);
+        patientRepository.save(patient);
+        return imageUrl;
+    }
 }

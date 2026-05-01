@@ -12,6 +12,10 @@ import com.shc.appointment.mapper.AppointmentMapper;
 import com.shc.appointment.repository.AppointmentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import java.util.HashMap;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,9 +26,11 @@ import java.util.UUID;
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
+    private final RestTemplate restTemplate;
 
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository) {
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, RestTemplate restTemplate) {
         this.appointmentRepository = appointmentRepository;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -51,6 +57,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setStatus(AppointmentStatus.PENDING);
 
         Appointment saved = appointmentRepository.save(appointment);
+        
+        sendNotification(saved.getPatientId(), "Appointment Pending", "Your appointment request has been submitted and is pending confirmation.", "APPOINTMENT");
+        sendNotification(saved.getDoctorId(), "New Appointment Request", "You have a new appointment request pending your review.", "APPOINTMENT");
+
         return AppointmentMapper.toResponse(saved);
     }
 
@@ -142,6 +152,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setStatus(AppointmentStatus.CANCELLED);
 
         Appointment saved = appointmentRepository.save(appointment);
+        sendNotification(saved.getPatientId(), "Appointment Cancelled", "Your appointment has been cancelled.", "APPOINTMENT");
+        sendNotification(saved.getDoctorId(), "Appointment Cancelled", "An appointment has been cancelled.", "APPOINTMENT");
+
         return AppointmentMapper.toResponse(saved);
     }
 
@@ -162,6 +175,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setStatus(status);
 
         Appointment saved = appointmentRepository.save(appointment);
+        
+        if (status == AppointmentStatus.CONFIRMED) {
+            sendNotification(saved.getPatientId(), "Appointment Confirmed", "Your appointment has been confirmed.", "APPOINTMENT");
+        } else if (status == AppointmentStatus.REJECTED) {
+            sendNotification(saved.getPatientId(), "Appointment Rejected", "Your appointment request has been rejected.", "APPOINTMENT");
+        } else if (status == AppointmentStatus.COMPLETED) {
+            sendNotification(saved.getPatientId(), "Appointment Completed", "Your appointment is marked as completed.", "APPOINTMENT");
+        }
+
         return AppointmentMapper.toResponse(saved);
     }
 
@@ -234,5 +256,18 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointment.getStatus() == AppointmentStatus.CANCELLED
                 || appointment.getStatus() == AppointmentStatus.REJECTED
                 || appointment.getStatus() == AppointmentStatus.COMPLETED;
+    }
+
+    private void sendNotification(String userId, String title, String message, String type) {
+        try {
+            Map<String, Object> request = new HashMap<>();
+            request.put("userId", userId);
+            request.put("title", title);
+            request.put("message", message);
+            request.put("type", type);
+            restTemplate.postForEntity("http://localhost:8088/api/notifications", request, Object.class);
+        } catch (Exception e) {
+            System.err.println("Failed to send notification: " + e.getMessage());
+        }
     }
 }
