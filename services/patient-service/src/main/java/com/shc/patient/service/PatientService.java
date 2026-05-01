@@ -13,7 +13,7 @@ public interface PatientService {
 
     public PatientRequestDTO getPatientById(java.util.UUID id);
 
-    public PatientRequestDTO getPatientByUserId(String userId);
+    public Patient getPatientByUserId(String userId);
 
     public PatientRequestDTO getPatientByNic(String nic);
 

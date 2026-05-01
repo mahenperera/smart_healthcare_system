@@ -51,7 +51,7 @@ public class PatientController {
     }
 
     @GetMapping("/patients/user/{userId}")
-    public PatientRequestDTO getPatientByUserId(@PathVariable String userId) {
+    public Patient getPatientByUserId(@PathVariable String userId) {
         return patientService.getPatientByUserId(userId);
     }
 

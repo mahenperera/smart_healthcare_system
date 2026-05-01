@@ -1,11 +1,13 @@
 package com.shc.patient.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.shc.patient.enums.GenderType;
 
 public class PatientRequestDTO {
 
+    private UUID id;
     private String userId;
     private String nic;
     private String name;
@@ -15,6 +17,14 @@ public class PatientRequestDTO {
     private String profileImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getUserId() {
         return userId;

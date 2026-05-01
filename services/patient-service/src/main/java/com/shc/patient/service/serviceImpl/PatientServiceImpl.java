@@ -45,6 +45,7 @@ public class PatientServiceImpl implements PatientService {
     public PatientRequestDTO getPatientById(UUID id) {
         Patient patient = patientRepository.findById(id).orElseThrow(() -> new RuntimeException("Patient not found"));
         PatientRequestDTO patientRequestDTO = new PatientRequestDTO();
+        patientRequestDTO.setId(patient.getId());
         patientRequestDTO.setNic(patient.getNic());
         patientRequestDTO.setName(patient.getName());
         patientRequestDTO.setGender(patient.getGender());
@@ -55,24 +56,16 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PatientRequestDTO getPatientByUserId(String userId) {
-        Patient patient = patientRepository.findByUserId(userId)
+    public Patient getPatientByUserId(String userId) {
+        return patientRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Patient not found for userId: " + userId));
-        PatientRequestDTO dto = new PatientRequestDTO();
-        dto.setUserId(patient.getUserId());
-        dto.setNic(patient.getNic());
-        dto.setName(patient.getName());
-        dto.setGender(patient.getGender());
-        dto.setEmail(patient.getEmail());
-        dto.setPhone(patient.getPhone());
-        dto.setProfileImageUrl(patient.getProfileImageUrl());
-        return dto;
     }
 
     @Override
     public PatientRequestDTO getPatientByNic(String nic) {
         Patient patient = patientRepository.findByNic(nic).orElseThrow(() -> new RuntimeException("Patient not found"));
         PatientRequestDTO patientRequestDTO = new PatientRequestDTO();
+        patientRequestDTO.setId(patient.getId());
         patientRequestDTO.setNic(patient.getNic());
         patientRequestDTO.setName(patient.getName());
         patientRequestDTO.setGender(patient.getGender());
@@ -92,6 +85,7 @@ public class PatientServiceImpl implements PatientService {
         patient.setPhone(patientRequestDTO.getPhone());
         patient.setProfileImageUrl(patientRequestDTO.getProfileImageUrl());
         patientRepository.save(patient);
+        patientRequestDTO.setId(patient.getId());
         return patientRequestDTO;
     }
 
