@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { useAuth } from "../../context/AuthContext";
 import logoImg from "../../assets/logo.jpeg";
+import NotificationDropdown from "./NotificationDropdown";
 
 function NavItem({ to, children, onClick }) {
   return (
@@ -102,6 +103,8 @@ export default function Navbar() {
                   {role}
                 </div>
               )}
+
+              {isAuthenticated && <NotificationDropdown />}
  
               {isAuthenticated ? (
                 <button
@@ -137,6 +140,7 @@ export default function Navbar() {
                 {role}
               </div>
             )}
+            {isAuthenticated && <NotificationDropdown />}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
