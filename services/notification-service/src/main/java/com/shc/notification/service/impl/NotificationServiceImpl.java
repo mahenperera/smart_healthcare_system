@@ -106,4 +106,15 @@ public class NotificationServiceImpl implements NotificationService {
 
         return dto;
     }
+
+    @Override
+    public void deleteNotification(UUID id) {
+        notificationRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllUserNotifications(String userId) {
+        List<Notification> all = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        notificationRepository.deleteAll(all);
+    }
 }

@@ -58,4 +58,16 @@ public class NotificationController {
             @RequestBody NotificationSettingDTO dto) {
         return ResponseEntity.ok(notificationService.updateSettings(userId, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable UUID id) {
+        notificationService.deleteNotification(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<Void> deleteAllUserNotifications(@PathVariable String userId) {
+        notificationService.deleteAllUserNotifications(userId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -8,4 +8,6 @@ export const notificationApi = {
   
   getSettings: (userId) => http.get(`/api/notifications/settings/${userId}`),
   updateSettings: (userId, payload) => http.put(`/api/notifications/settings/${userId}`, payload),
+  delete: (id) => http.delete(`/api/notifications/${id}`),
+  deleteAll: (userId) => http.delete(`/api/notifications/user/${userId}`),
 };

@@ -14,6 +14,8 @@ public interface NotificationService {
     List<Notification> getUnreadUserNotifications(String userId);
     void markAsRead(UUID id);
     void markAllAsRead(String userId);
+    void deleteNotification(UUID id);
+    void deleteAllUserNotifications(String userId);
     
     NotificationSettingDTO getSettings(String userId);
     NotificationSettingDTO updateSettings(String userId, NotificationSettingDTO dto);

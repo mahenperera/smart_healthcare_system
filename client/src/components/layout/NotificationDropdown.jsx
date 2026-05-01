@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Bell, Check, Settings, Info, CalendarClock, CreditCard } from "lucide-react";
+import { Bell, Check, Settings, Info, CalendarClock, CreditCard, Trash2, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { notificationApi } from "../../api/notification-api";
@@ -72,6 +72,29 @@ export default function NotificationDropdown() {
     }
   };
 
+  const handleDelete = async (id, e) => {
+    e?.stopPropagation();
+    try {
+      await notificationApi.delete(id);
+      setNotifications(prev => prev.filter(n => n.id !== id));
+      const wasUnread = notifications.find(n => n.id === id && !n.read);
+      if (wasUnread) setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error("Failed to delete notification", err);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (!window.confirm("Are you sure you want to delete all notifications?")) return;
+    try {
+      await notificationApi.deleteAll(user.userId);
+      setNotifications([]);
+      setUnreadCount(0);
+    } catch (err) {
+      console.error("Failed to delete all notifications", err);
+    }
+  };
+
   const getIcon = (type) => {
     switch(type) {
       case 'APPOINTMENT': return <CalendarClock size={16} className="text-blue-500" />;
@@ -99,10 +122,19 @@ export default function NotificationDropdown() {
             <div>
               <h3 className="font-extrabold text-slate-900">Notifications</h3>
               <p className="text-xs font-semibold text-slate-500 mt-0.5">
-                You have {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
+                {notifications.length} total, {unreadCount} unread
               </p>
             </div>
             <div className="flex gap-2">
+              {notifications.length > 0 && (
+                <button 
+                  onClick={handleDeleteAll}
+                  className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 transition-colors"
+                  title="Delete all"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
               {unreadCount > 0 && (
                 <button 
                   onClick={handleMarkAllAsRead}
@@ -112,14 +144,6 @@ export default function NotificationDropdown() {
                   <Check size={16} />
                 </button>
               )}
-              <Link 
-                to="/notifications/settings" 
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
-                title="Settings"
-              >
-                <Settings size={16} />
-              </Link>
             </div>
           </div>
 
@@ -135,7 +159,7 @@ export default function NotificationDropdown() {
                 {notifications.map((notification) => (
                   <div 
                     key={notification.id} 
-                    className={`p-4 flex gap-4 transition-colors hover:bg-slate-50 cursor-pointer ${!notification.read ? 'bg-blue-50/30' : ''}`}
+                    className={`p-4 flex gap-4 transition-colors hover:bg-slate-50 group cursor-pointer ${!notification.read ? 'bg-blue-50/30' : ''}`}
                     onClick={() => {
                       if (!notification.read) handleMarkAsRead(notification.id);
                     }}
@@ -148,9 +172,18 @@ export default function NotificationDropdown() {
                         <p className={`text-sm truncate ${!notification.read ? 'font-bold text-slate-900' : 'font-semibold text-slate-700'}`}>
                           {notification.title}
                         </p>
-                        <span className="text-[10px] font-semibold text-slate-400 whitespace-nowrap shrink-0 mt-0.5">
-                          {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-semibold text-slate-400 whitespace-nowrap shrink-0 mt-0.5">
+                            {formatDistanceToNow(notification.createdAt)}
+                          </span>
+                          <button 
+                            onClick={(e) => handleDelete(notification.id, e)}
+                            className="p-1 rounded bg-slate-100 text-slate-400 opacity-0 group-hover:opacity-100 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                            title="Delete"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
                       </div>
                       <p className={`text-xs mt-1 line-clamp-2 ${!notification.read ? 'font-medium text-slate-600' : 'text-slate-500'}`}>
                         {notification.message}
@@ -171,8 +204,9 @@ export default function NotificationDropdown() {
             <Link 
               to="/notifications/settings" 
               onClick={() => setIsOpen(false)}
-              className="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors"
+              className="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors flex items-center justify-center gap-1.5"
             >
+              <Settings size={12} />
               Manage Preferences
             </Link>
           </div>
